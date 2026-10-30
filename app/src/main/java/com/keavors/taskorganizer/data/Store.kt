@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 /**
@@ -31,7 +33,11 @@ class Store(private val storage: AppStorage, private val scope: CoroutineScope) 
 
     val current: AppData get() = _data.value ?: error("Data is not loaded")
 
-    suspend fun load() {
+    private val loadLock = Mutex()
+
+    /** Loads the files once; the screen and the reminder receiver may both ask for it. */
+    suspend fun ensureLoaded() = loadLock.withLock {
+        if (_data.value != null) return@withLock
         val (loaded, settings) = withContext(io) { storage.loadData() to storage.loadSettings() }
         recovery = loaded.recovery
         _settings.value = settings

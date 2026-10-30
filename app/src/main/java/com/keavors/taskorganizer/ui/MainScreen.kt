@@ -1,6 +1,10 @@
 package com.keavors.taskorganizer.ui
 
+import android.Manifest
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,6 +32,16 @@ import kotlinx.coroutines.launch
 fun AppRoot(vm: MainViewModel) {
     val data by vm.data.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
+
+    // Asked when the first entry gets a time to remind at.
+    val notifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (!granted) vm.notificationsDenied()
+    }
+    LaunchedEffect(Unit) {
+        vm.notificationRequests.collect {
+            if (Build.VERSION.SDK_INT >= 33) notifications.launch(Manifest.permission.POST_NOTIFICATIONS) else vm.notificationsDenied()
+        }
+    }
 
     // Messages from any screen; a new one replaces the one on screen.
     LaunchedEffect(Unit) {

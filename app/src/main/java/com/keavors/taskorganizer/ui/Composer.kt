@@ -66,6 +66,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -87,6 +88,7 @@ import com.keavors.taskorganizer.data.Tab
 import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.speech.DictationPhase
 import com.keavors.taskorganizer.text.Entries
+import com.keavors.taskorganizer.ui.theme.LocalDesign
 import kotlinx.coroutines.delay
 
 /** Inserts dictated text at the cursor; returns the new field value and the inserted piece. */
@@ -159,12 +161,7 @@ fun Composer(vm: MainViewModel, tab: Tab) {
             VoiceBar(vm, phase)
         }
         Row(verticalAlignment = Alignment.Bottom) {
-            Surface(
-                shape = RoundedCornerShape(28.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.weight(1f).heightIn(min = 56.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            FieldFrame(Modifier.weight(1f)) {
                     BasicTextField(
                         value = field,
                         onValueChange = {
@@ -179,7 +176,7 @@ fun Composer(vm: MainViewModel, tab: Tab) {
                         ),
                         keyboardActions = KeyboardActions(onDone = { submit(field.text) }),
                         maxLines = 6,
-                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
+                        modifier = Modifier.weight(1f).padding(start = fieldTextStart(), end = 8.dp, top = 14.dp, bottom = 14.dp),
                         decorationBox = { inner ->
                             Box {
                                 if (field.text.isEmpty()) {
@@ -196,14 +193,13 @@ fun Composer(vm: MainViewModel, tab: Tab) {
                     AnimatedVisibility(field.text.isNotBlank(), enter = fadeIn(), exit = fadeOut()) {
                         IconButton(onClick = { submit(field.text) }) {
                             Box(
-                                Modifier.size(36.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary),
+                                Modifier.size(36.dp).clip(LocalDesign.current.micShape).background(MaterialTheme.colorScheme.primary),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(Icons.Rounded.ArrowUpward, "Добавить", tint = MaterialTheme.colorScheme.onPrimary)
                             }
                         }
                     }
-                }
             }
             Spacer(Modifier.width(10.dp))
             MicButton(phase, dictation.level.collectAsStateWithLifecycle().value, onPress = pressMic, onRelease = { dictation.release() })
@@ -214,32 +210,36 @@ fun Composer(vm: MainViewModel, tab: Tab) {
 @Composable
 private fun MicButton(phase: DictationPhase, level: Float, onPress: () -> Boolean, onRelease: () -> Unit) {
     val colors = MaterialTheme.colorScheme
+    val design = LocalDesign.current
+    val shape = design.micShape
+    val size = design.micSize
     val listening = phase is DictationPhase.Listening
     val busy = phase == DictationPhase.Finishing
     val ring by animateFloatAsState(if (listening) 1f + level * 0.55f else 1f, label = "ring")
     val container = if (listening) colors.error else colors.primary
     val content = if (listening) colors.onError else colors.onPrimary
 
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(56.dp)) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(size)) {
         if (listening) {
             Box(
                 Modifier
-                    .size(56.dp)
+                    .size(size)
                     .graphicsLayer {
                         scaleX = ring
                         scaleY = ring
                     }
-                    .clip(CircleShape)
+                    .clip(shape)
                     .background(container.copy(alpha = 0.22f))
             )
         }
         Surface(
-            shape = CircleShape,
+            shape = shape,
             color = container,
             contentColor = content,
             shadowElevation = 3.dp,
             modifier = Modifier
-                .size(56.dp)
+                .then(if (design.glow) Modifier.shadow(12.dp, shape, ambientColor = container, spotColor = container) else Modifier)
+                .size(size)
                 .pointerInput(busy) {
                     if (busy) return@pointerInput
                     awaitEachGesture {
@@ -268,7 +268,7 @@ private fun VoiceBar(vm: MainViewModel, phase: DictationPhase) {
     val dictation = vm.services.dictation
     val partial by dictation.partial.collectAsStateWithLifecycle()
     Surface(
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.large,
         color = colors.surfaceContainerHigh,
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
     ) {
@@ -345,7 +345,7 @@ private fun LearnCard(vm: MainViewModel) {
     val learn = vm.learn
     AnimatedVisibility(learn.isNotEmpty(), enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
         Surface(
-            shape = RoundedCornerShape(20.dp),
+            shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.secondaryContainer,
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         ) {

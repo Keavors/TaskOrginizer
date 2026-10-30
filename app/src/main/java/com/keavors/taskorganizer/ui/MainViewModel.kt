@@ -1,8 +1,11 @@
 package com.keavors.taskorganizer.ui
 
 import android.app.Application
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings as SystemSettings
 import androidx.compose.runtime.getValue
+import androidx.core.app.NotificationManagerCompat
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -13,6 +16,7 @@ import com.keavors.taskorganizer.data.AppStorage
 import com.keavors.taskorganizer.data.DataOps
 import com.keavors.taskorganizer.data.Item
 import com.keavors.taskorganizer.data.ItemSource
+import com.keavors.taskorganizer.data.Priority
 import com.keavors.taskorganizer.data.Settings
 import com.keavors.taskorganizer.data.TabColor
 import com.keavors.taskorganizer.data.TabKind
@@ -50,7 +54,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         viewModelScope.launch {
-            if (store.data.value == null) store.load()
+            store.ensureLoaded()
             when (store.recovery) {
                 AppStorage.Recovery.BACKUP -> message("Файл данных был повреждён — восстановлено из резервной копии.")
                 AppStorage.Recovery.NEW -> message("Файл данных был повреждён, резервных копий нет — начат новый список.")
@@ -89,10 +93,47 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setDone(tabId: String, itemId: String, done: Boolean) = store.update { DataOps.setDone(it, tabId, itemId, done) }
 
-    fun setImportant(tabId: String, itemId: String, important: Boolean) =
-        store.update { DataOps.setImportant(it, tabId, itemId, important) }
+    fun setPriority(tabId: String, itemId: String, priority: Priority) =
+        store.update { DataOps.setPriority(it, tabId, itemId, priority) }
 
-    fun setDueDate(tabId: String, itemId: String, date: String?) = store.update { DataOps.setDueDate(it, tabId, itemId, date) }
+    /** Sets the due date and time; asks for notifications once if the entry will remind. */
+    fun setDue(tabId: String, itemId: String, date: String?, time: String?) {
+        store.update { DataOps.setDue(it, tabId, itemId, date, time) }
+        val r = settings.value.reminders
+        val reminds = date != null && r.enabled && (time != null || r.allDayMinute >= 0)
+        if (reminds && !askedNotifications && !NotificationManagerCompat.from(getApplication()).areNotificationsEnabled()) {
+            askedNotifications = true
+            _notificationRequests.tryEmit(Unit)
+        }
+    }
+
+    private var askedNotifications = false
+    private val _notificationRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    /** The screen asks Android for the notification permission. */
+    val notificationRequests: SharedFlow<Unit> = _notificationRequests.asSharedFlow()
+
+    fun notificationsDenied() =
+        message("Уведомления выключены — напоминания не придут", "Включить") { openNotificationSettings() }
+
+    fun openNotificationSettings() {
+        val app = getApplication<Application>()
+        val intent = Intent(SystemSettings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(SystemSettings.EXTRA_APP_PACKAGE, app.packageName)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        runCatching { app.startActivity(intent) }
+    }
+
+    /** From a reminder notification: show the entry in its tab. */
+    fun openItem(tabId: String?, itemId: String) {
+        viewModelScope.launch {
+            store.ensureLoaded()
+            val d = store.data.value ?: return@launch
+            val tab = d.tabs.firstOrNull { t -> d.itemsOf(t.id).any { it.id == itemId } }?.id ?: tabId ?: return@launch
+            store.update { DataOps.setActiveTab(it, tab) }
+            screen = Screen.MAIN
+            highlightItemId = itemId
+        }
+    }
 
     /** Saving an empty text deletes the entry (with undo). */
     fun setText(tabId: String, item: Item, text: String) {

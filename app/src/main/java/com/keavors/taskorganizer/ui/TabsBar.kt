@@ -58,6 +58,8 @@ import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.Tab
 import com.keavors.taskorganizer.data.TabColor
 import com.keavors.taskorganizer.data.TabKind
+import com.keavors.taskorganizer.ui.theme.LocalDesign
+import com.keavors.taskorganizer.ui.theme.TabsLook
 import com.keavors.taskorganizer.ui.theme.tabColor
 
 private val COLOR_NAMES = mapOf(
@@ -118,26 +120,20 @@ private fun TabsRow(vm: MainViewModel, data: AppData) {
         }
     }
 
+    val gap = when (LocalDesign.current.tabs) {
+        TabsLook.UNDERLINE, TabsLook.BRACKETS -> 4.dp
+        else -> 8.dp
+    }
     LazyRow(
         state = listState,
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(gap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         itemsIndexed(data.tabs, key = { _, tab -> tab.id }) { index, tab ->
             TabChip(vm, data, tab, index, Modifier.animateItem())
         }
-        item(key = "add") {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                modifier = Modifier.clip(CircleShape).clickable { newTab = true }
-            ) {
-                Box(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                    Icon(Icons.Outlined.Add, "Новая вкладка", Modifier.size(20.dp))
-                }
-            }
-        }
+        item(key = "add") { AddTabButton { newTab = true } }
     }
 
     if (newTab) {
@@ -156,48 +152,19 @@ private fun TabChip(vm: MainViewModel, data: AppData, tab: Tab, index: Int, modi
     var menu by remember { mutableStateOf(false) }
     var rename by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
-    val colors = MaterialTheme.colorScheme
 
     Box(modifier) {
-        Surface(
-            shape = CircleShape,
-            color = if (selected) colors.primary else colors.surfaceContainerHigh,
-            contentColor = if (selected) colors.onPrimary else colors.onSurface,
-            modifier = Modifier
-                .clip(CircleShape)
-                .combinedClickable(
-                    onClick = { vm.selectTab(tab.id) },
-                    onLongClick = {
-                        vm.selectTab(tab.id)
-                        menu = true
-                    }
-                )
-        ) {
-            Row(Modifier.padding(horizontal = 16.dp, vertical = 9.dp), verticalAlignment = Alignment.CenterVertically) {
-                tab.color?.let {
-                    Box(
-                        Modifier.size(9.dp).clip(CircleShape).background(tabColor(it))
-                            .then(if (selected) Modifier.border(1.5.dp, colors.onPrimary, CircleShape) else Modifier)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                }
-                Text(
-                    tab.title,
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.widthIn(max = 180.dp)
-                )
-                if (count > 0) {
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        count.toString(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = if (selected) colors.onPrimary.copy(alpha = 0.75f) else colors.onSurfaceVariant
-                    )
-                }
+        TabLabel(
+            title = tab.title,
+            selected = selected,
+            dot = tab.color?.let { tabColor(it) },
+            count = count,
+            onClick = { vm.selectTab(tab.id) },
+            onLongClick = {
+                vm.selectTab(tab.id)
+                menu = true
             }
-        }
+        )
 
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
             DropdownMenuItem(text = { Text("Переименовать") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = {

@@ -1,7 +1,5 @@
 package com.keavors.taskorganizer.ui
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,11 +21,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -36,21 +34,18 @@ import androidx.compose.material.icons.outlined.EventBusy
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.GraphicEq
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -62,54 +57,69 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.keavors.taskorganizer.data.AppData
+import com.keavors.taskorganizer.data.DataOps
 import com.keavors.taskorganizer.data.Item
+import com.keavors.taskorganizer.data.ItemSort
 import com.keavors.taskorganizer.data.ItemSource
+import com.keavors.taskorganizer.data.Priority
 import com.keavors.taskorganizer.data.Tab
 import com.keavors.taskorganizer.data.TabKind
-import com.keavors.taskorganizer.ui.theme.ImportantColor
+import com.keavors.taskorganizer.ui.theme.HeaderSize
+import com.keavors.taskorganizer.ui.theme.LocalDesign
+import com.keavors.taskorganizer.ui.theme.priorityColor
 import com.keavors.taskorganizer.ui.theme.tabColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Composable
 fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: PaddingValues) {
+    val settings by vm.settings.collectAsStateWithLifecycle()
+    val design = LocalDesign.current
     val items = data.itemsOf(tab.id)
     val isTasks = tab.kind == TabKind.TASKS
-    val open = if (isTasks) items.filter { !it.done } else items
+    val open = DataOps.displayOrder(if (isTasks) items.filter { !it.done } else items, settings.sort)
     val done = if (isTasks) items.filter { it.done }.sortedByDescending { it.completedAt ?: 0 } else emptyList()
     var showDone by rememberSaveable(tab.id) { mutableStateOf(true) }
-    val openIds = open.map { it.id }.toSet()
+    // Read by the drag callback, which outlives this composition.
+    val openById by rememberUpdatedState(open.associateBy { it.id })
+    val byPriority by rememberUpdatedState(settings.sort == ItemSort.PRIORITY)
+    val tabId by rememberUpdatedState(tab.id)
 
     val listState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(listState) { from, to ->
-        val a = from.key as? String
-        val b = to.key as? String
-        if (a != null && b != null && a in openIds && b in openIds) vm.moveItem(tab.id, a, b)
+        val a = openById[from.key as? String]
+        val b = openById[to.key as? String]
+        // Sorted by importance, an entry can only move within its level.
+        if (a != null && b != null && (!byPriority || a.priority == b.priority)) vm.moveItem(tabId, a.id, b.id)
     }
 
-    // After a search: scroll to the entry and let it flash.
+    // After a search or a reminder: scroll to the entry and let it flash.
     val highlight = vm.highlightItemId
     LaunchedEffect(highlight, tab.id) {
         if (highlight == null) return@LaunchedEffect
@@ -137,7 +147,7 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
             top = contentPadding.calculateTopPadding() + 4.dp,
             bottom = contentPadding.calculateBottomPadding() + 24.dp
         ),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(design.itemGap),
         modifier = Modifier.fillMaxSize()
     ) {
         item(key = "header") { TabHeader(tab, open.size, done.size) }
@@ -170,18 +180,34 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
 
 @Composable
 private fun TabHeader(tab: Tab, open: Int, done: Int) {
-    Column(Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp)) {
+    val h = LocalDesign.current.header
+    val colors = MaterialTheme.colorScheme
+    val base = when (h.size) {
+        HeaderSize.TITLE -> MaterialTheme.typography.titleLarge
+        HeaderSize.HEADLINE -> MaterialTheme.typography.headlineSmall
+        HeaderSize.LARGE -> MaterialTheme.typography.headlineMedium
+    }
+    Column(Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             tab.color?.let {
                 Box(Modifier.size(12.dp).clip(CircleShape).background(tabColor(it)))
                 Spacer(Modifier.width(10.dp))
             }
-            Text(tab.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+            val title = h.prefix + tab.title
+            Text(
+                if (h.uppercase) title.uppercase() else title,
+                style = base.copy(
+                    fontWeight = h.weight,
+                    fontStyle = if (h.italic) FontStyle.Italic else FontStyle.Normal,
+                    letterSpacing = if (h.uppercase) 1.sp else base.letterSpacing
+                ),
+                color = if (h.accent) colors.primary else colors.onSurface
+            )
         }
         val subtitle = if (tab.kind == TabKind.TASKS) {
             listOfNotNull(activeCount(open), if (done > 0) doneCount(done) else null).joinToString(" · ")
         } else notesCount(open)
-        Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
     }
 }
 
@@ -207,12 +233,6 @@ private fun EmptyState(tab: Tab) {
             if (tab.kind == TabKind.TASKS) "Задач пока нет" else "Заметок пока нет",
             style = MaterialTheme.typography.titleMedium
         )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "Напишите внизу или нажмите на микрофон и надиктуйте.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
@@ -232,19 +252,11 @@ private fun ItemRow(
     var menu by remember { mutableStateOf(false) }
     var dueMenu by remember { mutableStateOf(false) }
     var datePicker by remember { mutableStateOf(false) }
+    var timePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val colors = MaterialTheme.colorScheme
-
+    val design = LocalDesign.current
     val swipe = rememberSwipeToDismissBoxState()
-    val background by animateColorAsState(
-        when {
-            highlighted -> colors.primaryContainer
-            dragging -> colors.surfaceContainerHigh
-            else -> colors.surfaceContainerLowest
-        },
-        animationSpec = tween(400),
-        label = "row"
-    )
 
     SwipeToDismissBox(
         state = swipe,
@@ -262,21 +274,33 @@ private fun ItemRow(
         },
         backgroundContent = { SwipeBackground(swipe.dismissDirection, item.done) }
     ) {
-        Surface(
-            color = background,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (dragging) Modifier.shadow(8.dp, MaterialTheme.shapes.medium) else Modifier)
-                .border(1.dp, colors.outlineVariant.copy(alpha = if (dragging) 0f else 0.6f), MaterialTheme.shapes.medium)
-        ) {
-            Row(Modifier.padding(start = 4.dp, end = 0.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        ItemFrame(item.priority, highlighted, dragging) {
+            // The whole entry reacts: tap = edit, hold = menu.
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(
+                        enabled = !editing,
+                        onClickLabel = "Изменить",
+                        onLongClickLabel = "Меню",
+                        onClick = { editing = true },
+                        onLongClick = { menu = true }
+                    )
+                    .padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 if (isTask) {
-                    CheckCircle(checked = item.done) { vm.setDone(tab.id, item.id, !item.done) }
+                    Box(
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .clickable(onClickLabel = if (item.done) "Вернуть" else "Выполнено") { vm.setDone(tab.id, item.id, !item.done) },
+                        contentAlignment = Alignment.Center
+                    ) { CheckMark(item.done) }
                 } else {
                     Spacer(Modifier.width(14.dp))
                 }
-                Column(Modifier.weight(1f).padding(vertical = 8.dp)) {
+                Column(Modifier.weight(1f).padding(vertical = design.itemPadding)) {
                     if (editing) {
                         ItemEditor(item, multiLine = !isTask, onDone = { text ->
                             editing = false
@@ -287,16 +311,12 @@ private fun ItemRow(
                             item.text,
                             style = MaterialTheme.typography.bodyLarge,
                             color = if (item.done) colors.onSurfaceVariant else colors.onSurface,
-                            textDecoration = if (item.done) TextDecoration.LineThrough else null,
-                            modifier = Modifier.fillMaxWidth().combinedClickable(
-                                onClick = { editing = true },
-                                onLongClick = { menu = true }
-                            )
+                            textDecoration = if (item.done) TextDecoration.LineThrough else null
                         )
                     }
                     if (!editing && (item.dueDate != null || item.source == ItemSource.VOICE)) {
                         Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                            item.dueDate?.let { DueChip(it, item.done) { dueMenu = true } }
+                            item.dueDate?.let { DueChip(it, item.dueTime, item.done) { dueMenu = true } }
                             if (item.source == ItemSource.VOICE) {
                                 if (item.dueDate != null) Spacer(Modifier.width(8.dp))
                                 Icon(Icons.Rounded.GraphicEq, "Надиктовано", Modifier.size(14.dp), tint = colors.onSurfaceVariant.copy(alpha = 0.7f))
@@ -305,19 +325,17 @@ private fun ItemRow(
                     }
                 }
                 Box {
-                    IconButton(onClick = { vm.setImportant(tab.id, item.id, !item.important) }) {
-                        Icon(
-                            if (item.important) Icons.Rounded.Star else Icons.Outlined.StarBorder,
-                            if (item.important) "Снять «важное»" else "Отметить как важное",
-                            tint = if (item.important) ImportantColor else colors.onSurfaceVariant.copy(alpha = 0.6f)
-                        )
-                    }
+                    PriorityFlag(item.priority) { vm.setPriority(tab.id, item.id, item.priority.next()) }
                     DueMenu(
                         expanded = dueMenu,
-                        current = item.dueDate,
+                        date = item.dueDate,
+                        time = item.dueTime,
                         onDismiss = { dueMenu = false },
-                        onPick = { vm.setDueDate(tab.id, item.id, it) },
-                        onCustom = { datePicker = true }
+                        onPickDate = { vm.setDue(tab.id, item.id, it, item.dueTime) },
+                        onCustomDate = { datePicker = true },
+                        onPickTime = { timePicker = true },
+                        onClearTime = { vm.setDue(tab.id, item.id, item.dueDate, null) },
+                        onClear = { vm.setDue(tab.id, item.id, null, null) }
                     )
                     ItemMenu(
                         expanded = menu,
@@ -345,7 +363,22 @@ private fun ItemRow(
     }
 
     if (datePicker) {
-        DueDateDialog(initial = item.dueDate, onDismiss = { datePicker = false }) { vm.setDueDate(tab.id, item.id, it) }
+        DueDateDialog(initial = item.dueDate, onDismiss = { datePicker = false }) { vm.setDue(tab.id, item.id, it, item.dueTime) }
+    }
+    if (timePicker) {
+        val initial = item.dueTime?.let { runCatching { LocalTime.parse(it) }.getOrNull() }
+            ?: LocalTime.now().plusHours(1).withMinute(0).withSecond(0).withNano(0)
+        TimePickerDialog(
+            initial = initial,
+            onDismiss = { timePicker = false },
+            onClear = if (item.dueTime != null) ({ vm.setDue(tab.id, item.id, item.dueDate, null) }) else null
+        ) { time ->
+            // Without a date: today, or tomorrow if that time has already passed today.
+            val date = item.dueDate ?: LocalDate.now().let { today ->
+                if (today.atTime(time).isBefore(LocalDateTime.now())) today.plusDays(1) else today
+            }.toString()
+            vm.setDue(tab.id, item.id, date, time.toString())
+        }
     }
 }
 
@@ -358,7 +391,7 @@ private fun SwipeBackground(direction: SwipeToDismissBoxValue, done: Boolean) {
         SwipeToDismissBoxValue.Settled -> Triple(Color.Transparent, null, Alignment.Center)
     }
     Box(
-        Modifier.fillMaxSize().clip(MaterialTheme.shapes.medium).background(color).padding(horizontal = 20.dp),
+        Modifier.fillMaxSize().clip(LocalDesign.current.itemShape).background(color).padding(horizontal = 20.dp),
         contentAlignment = alignment
     ) {
         if (icon != null) Icon(icon, null, tint = if (direction == SwipeToDismissBoxValue.EndToStart) colors.onErrorContainer else colors.onPrimaryContainer)
@@ -366,29 +399,8 @@ private fun SwipeBackground(direction: SwipeToDismissBoxValue, done: Boolean) {
 }
 
 @Composable
-private fun CheckCircle(checked: Boolean, onToggle: () -> Unit) {
-    val colors = MaterialTheme.colorScheme
-    val fill by animateColorAsState(if (checked) colors.primary else Color.Transparent, label = "check")
-    Box(
-        Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onToggle),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            Modifier
-                .size(22.dp)
-                .clip(CircleShape)
-                .background(fill)
-                .border(2.dp, if (checked) colors.primary else colors.outline, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            if (checked) Icon(Icons.Rounded.Check, "Выполнено", tint = colors.onPrimary, modifier = Modifier.size(15.dp))
-        }
-    }
-}
-
-@Composable
-private fun DueChip(iso: String, done: Boolean, onClick: () -> Unit) {
-    val (text, tone) = Due.label(iso)
+private fun DueChip(date: String, time: String?, done: Boolean, onClick: () -> Unit) {
+    val (text, tone) = Due.label(date, time)
     val colors = MaterialTheme.colorScheme
     val (bg, fg) = when {
         done -> colors.surfaceContainerHigh to colors.onSurfaceVariant
@@ -397,10 +409,10 @@ private fun DueChip(iso: String, done: Boolean, onClick: () -> Unit) {
         else -> colors.surfaceContainerHigh to colors.onSurfaceVariant
     }
     Row(
-        Modifier.clip(RoundedCornerShape(8.dp)).background(bg).clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 3.dp),
+        Modifier.clip(MaterialTheme.shapes.extraSmall).background(bg).clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Outlined.CalendarMonth, null, Modifier.size(13.dp), tint = fg)
+        Icon(if (time != null) Icons.Outlined.Alarm else Icons.Outlined.CalendarMonth, null, Modifier.size(13.dp), tint = fg)
         Spacer(Modifier.width(4.dp))
         Text(text, style = MaterialTheme.typography.labelMedium, color = fg)
     }
@@ -440,25 +452,45 @@ private fun ItemEditor(item: Item, multiLine: Boolean, onDone: (String) -> Unit)
 }
 
 @Composable
-private fun DueMenu(expanded: Boolean, current: String?, onDismiss: () -> Unit, onPick: (String?) -> Unit, onCustom: () -> Unit) {
+private fun DueMenu(
+    expanded: Boolean,
+    date: String?,
+    time: String?,
+    onDismiss: () -> Unit,
+    onPickDate: (String) -> Unit,
+    onCustomDate: () -> Unit,
+    onPickTime: () -> Unit,
+    onClearTime: () -> Unit,
+    onClear: () -> Unit
+) {
     val today = LocalDate.now()
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
         DropdownMenuItem(text = { Text("Сегодня") }, leadingIcon = { Icon(Icons.Outlined.Today, null) }, onClick = {
-            onDismiss(); onPick(today.toString())
+            onDismiss(); onPickDate(today.toString())
         })
         DropdownMenuItem(text = { Text("Завтра") }, leadingIcon = { Icon(Icons.Outlined.Event, null) }, onClick = {
-            onDismiss(); onPick(today.plusDays(1).toString())
+            onDismiss(); onPickDate(today.plusDays(1).toString())
         })
         DropdownMenuItem(text = { Text("Через неделю") }, leadingIcon = { Icon(Icons.Outlined.Event, null) }, onClick = {
-            onDismiss(); onPick(today.plusWeeks(1).toString())
+            onDismiss(); onPickDate(today.plusWeeks(1).toString())
         })
         DropdownMenuItem(text = { Text("Выбрать дату…") }, leadingIcon = { Icon(Icons.Outlined.CalendarMonth, null) }, onClick = {
-            onDismiss(); onCustom()
+            onDismiss(); onCustomDate()
         })
-        if (current != null) {
-            HorizontalDivider()
+        HorizontalDivider()
+        DropdownMenuItem(
+            text = { Text(if (time == null) "Время…" else "Время: ${Due.time(time)}") },
+            leadingIcon = { Icon(Icons.Outlined.Schedule, null) },
+            onClick = { onDismiss(); onPickTime() }
+        )
+        if (time != null) {
+            DropdownMenuItem(text = { Text("Убрать время") }, leadingIcon = { Icon(Icons.Outlined.Alarm, null) }, onClick = {
+                onDismiss(); onClearTime()
+            })
+        }
+        if (date != null) {
             DropdownMenuItem(text = { Text("Убрать срок") }, leadingIcon = { Icon(Icons.Outlined.EventBusy, null) }, onClick = {
-                onDismiss(); onPick(null)
+                onDismiss(); onClear()
             })
         }
     }
@@ -476,6 +508,30 @@ private fun ItemMenu(
     onDue: () -> Unit
 ) {
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        Row(
+            Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Priority.entries.forEach { p ->
+                val selected = p == item.priority
+                Box(
+                    Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(priorityColor(p))
+                        .border(if (selected) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                        .clickable(onClickLabel = "Важность: ${priorityName(p)}") {
+                            onDismiss()
+                            vm.setPriority(tab.id, item.id, p)
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (selected) Icon(Icons.Rounded.Check, null, tint = Color.White, modifier = Modifier.size(18.dp))
+                }
+            }
+        }
+        HorizontalDivider()
         DropdownMenuItem(text = { Text("Изменить") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = {
             onDismiss(); onEdit()
         })

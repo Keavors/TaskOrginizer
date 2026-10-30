@@ -79,11 +79,16 @@ object DataOps {
     fun setText(d: AppData, tabId: String, itemId: String, text: String, now: Long = now()): AppData =
         updateItem(d, tabId, itemId, now) { it.copy(text = text) }
 
-    fun setImportant(d: AppData, tabId: String, itemId: String, important: Boolean, now: Long = now()): AppData =
-        updateItem(d, tabId, itemId, now) { it.copy(important = important) }
+    fun setPriority(d: AppData, tabId: String, itemId: String, priority: Priority, now: Long = now()): AppData =
+        updateItem(d, tabId, itemId, now) { it.copy(priority = priority, important = false) }
 
-    fun setDueDate(d: AppData, tabId: String, itemId: String, dueDate: String?, now: Long = now()): AppData =
-        updateItem(d, tabId, itemId, now) { it.copy(dueDate = dueDate) }
+    /** Sets the due date and time; without a date there is no time either. */
+    fun setDue(d: AppData, tabId: String, itemId: String, date: String?, time: String?, now: Long = now()): AppData =
+        updateItem(d, tabId, itemId, now) { it.copy(dueDate = date, dueTime = if (date == null) null else time) }
+
+    /** Order on screen: as stored, or red, yellow, gray with the stored order inside each level. */
+    fun displayOrder(items: List<Item>, sort: ItemSort): List<Item> =
+        if (sort == ItemSort.PRIORITY) items.sortedByDescending { it.priority } else items
 
     fun setDone(d: AppData, tabId: String, itemId: String, done: Boolean, now: Long = now()): AppData =
         updateItem(d, tabId, itemId, now) { if (it.done == done) it else it.copy(done = done, completedAt = if (done) now else null) }
@@ -186,15 +191,30 @@ object DataOps {
 
     // ------------------------------------------------------------------ integrity
 
-    /** Repairs references after loading or importing: every tab has a list, the active tab exists. */
+    /** The old "important" flag becomes the red level. */
+    private fun Item.migrated(): Item =
+        if (important) copy(important = false, priority = if (priority == Priority.NORMAL) Priority.HIGH else priority) else this
+
+    private fun List<Item>.migrated(): List<Item> = if (any { it.important }) map { it.migrated() } else this
+
+    /**
+     * Repairs references after loading or importing: every tab has a list, the active tab exists.
+     * Also converts data of older versions.
+     */
     fun normalize(d: AppData): AppData {
         val tabs = d.tabs.ifEmpty { listOf(createTab(DEFAULT_TAB_TITLE)) }
         val ids = tabs.map { it.id }.toSet()
-        val items = tabs.associate { it.id to d.items[it.id].orEmpty() }.toMutableMap()
+        val items = tabs.associate { it.id to d.items[it.id].orEmpty().migrated() }.toMutableMap()
         // Entries of a tab that no longer exists are kept: they move to the first tab.
-        val orphans = d.items.filterKeys { it !in ids }.values.flatten()
+        val orphans = d.items.filterKeys { it !in ids }.values.flatten().migrated()
         if (orphans.isNotEmpty()) items[tabs.first().id] = items[tabs.first().id].orEmpty() + orphans
         val active = d.activeTabId?.takeIf { it in ids } ?: tabs.first().id
-        return d.copy(tabs = tabs, items = items, activeTabId = active)
+        val trash = d.trash.map { entry ->
+            when (entry) {
+                is TrashedItem -> if (entry.item.important) entry.copy(item = entry.item.migrated()) else entry
+                is TrashedTab -> if (entry.items.any { it.important }) entry.copy(items = entry.items.migrated()) else entry
+            }
+        }
+        return d.copy(tabs = tabs, items = items, activeTabId = active, trash = trash)
     }
 }

@@ -1,6 +1,8 @@
 package com.keavors.taskorganizer.ui
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -27,29 +29,36 @@ fun formatClock(seconds: Long): String = "%d:%02d".format(seconds / 60, seconds 
 enum class DueTone { OVERDUE, TODAY, SOON, LATER }
 
 object Due {
-    private val ru = Locale("ru")
+    private val ru = Locale.forLanguageTag("ru")
     private val short = DateTimeFormatter.ofPattern("d MMM", ru)
     private val withYear = DateTimeFormatter.ofPattern("d MMM yyyy", ru)
 
-    fun today(): LocalDate = LocalDate.now()
-
-    fun label(iso: String, today: LocalDate = today()): Pair<String, DueTone> {
-        val date = runCatching { LocalDate.parse(iso) }.getOrNull() ?: return iso to DueTone.LATER
-        val diff = ChronoUnit.DAYS.between(today, date)
-        return when (diff) {
-            0L -> "Сегодня" to DueTone.TODAY
-            1L -> "Завтра" to DueTone.SOON
-            -1L -> "Вчера" to DueTone.OVERDUE
-            else -> {
-                val text = (if (date.year == today.year) short else withYear).format(date).replace(".", "")
-                text to when {
-                    diff < 0 -> DueTone.OVERDUE
-                    diff <= 7 -> DueTone.SOON
-                    else -> DueTone.LATER
-                }
-            }
+    /** "Сегодня", "Завтра, 9:30", "12 нояб, 18:00" and how urgent it is; a passed time is overdue. */
+    fun label(date: String, time: String?, now: LocalDateTime = LocalDateTime.now()): Pair<String, DueTone> {
+        val day = runCatching { LocalDate.parse(date) }.getOrNull() ?: return date to DueTone.LATER
+        val at = time?.let { runCatching { LocalTime.parse(it) }.getOrNull() }
+        val today = now.toLocalDate()
+        val diff = ChronoUnit.DAYS.between(today, day)
+        val dayText = when (diff) {
+            0L -> "Сегодня"
+            1L -> "Завтра"
+            -1L -> "Вчера"
+            else -> (if (day.year == today.year) short else withYear).format(day).replace(".", "")
         }
+        val tone = when {
+            at != null && day.atTime(at).isBefore(now) -> DueTone.OVERDUE
+            diff < 0 -> DueTone.OVERDUE
+            diff == 0L -> DueTone.TODAY
+            diff <= 7 -> DueTone.SOON
+            else -> DueTone.LATER
+        }
+        return (if (at != null) "$dayText, ${at.format(clock)}" else dayText) to tone
     }
+
+    private val clock = DateTimeFormatter.ofPattern("H:mm")
+
+    /** "09:30" -> "9:30". */
+    fun time(hhmm: String): String = runCatching { LocalTime.parse(hhmm).format(clock) }.getOrDefault(hhmm)
 }
 
 /** "5 мин назад", "вчера" for the trash. */

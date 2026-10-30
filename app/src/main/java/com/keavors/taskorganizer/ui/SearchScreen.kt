@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -100,7 +101,7 @@ fun SearchScreen(vm: MainViewModel, data: AppData) {
     val hits = remember(data, query) { search(data, query) }
     val colors = MaterialTheme.colorScheme
 
-    Column(Modifier.fillMaxSize().background(colors.background).statusBarsPadding().imePadding()) {
+    Column(Modifier.fillMaxSize().background(colors.background).statusBarsPadding().navigationBarsPadding().imePadding()) {
         Row(Modifier.padding(horizontal = 4.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { vm.screen = Screen.MAIN }) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Назад") }
             Surface(shape = RoundedCornerShape(24.dp), color = colors.surfaceContainerHigh, modifier = Modifier.weight(1f)) {

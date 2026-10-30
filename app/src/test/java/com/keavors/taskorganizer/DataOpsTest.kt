@@ -3,8 +3,11 @@ package com.keavors.taskorganizer
 import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.AppJson
 import com.keavors.taskorganizer.data.DataOps
+import com.keavors.taskorganizer.data.Item
+import com.keavors.taskorganizer.data.ItemSort
 import com.keavors.taskorganizer.data.ItemSource
 import com.keavors.taskorganizer.data.NewItemPosition
+import com.keavors.taskorganizer.data.Priority
 import com.keavors.taskorganizer.data.Settings
 import com.keavors.taskorganizer.data.TabColor
 import com.keavors.taskorganizer.data.TabKind
@@ -142,6 +145,41 @@ class DataOpsTest {
         val s = AppJson.decodeFromString(Settings.serializer(), json)
         assertEquals(Settings().theme, s.theme)
         assertEquals("en-US", s.speech.language)
+    }
+
+    @Test fun oldImportantFlagBecomesRed() {
+        val d0 = defaultData()
+        val tab = d0.tabs[0].id
+        val old = Item(id = "x", text = "Важное", important = true)
+        val fixed = DataOps.normalize(d0.copy(items = mapOf(tab to listOf(old))))
+        val item = fixed.itemsOf(tab).single()
+        assertEquals(Priority.HIGH, item.priority)
+        assertEquals(false, item.important)
+        // The flag is not written any more.
+        assertTrue("important" !in AppJson.encodeToString(Item.serializer(), item))
+    }
+
+    @Test fun priorityOrderKeepsTheOrderInsideALevel() {
+        val items = listOf(
+            Item(id = "1", text = "a"),
+            Item(id = "2", text = "b", priority = Priority.HIGH),
+            Item(id = "3", text = "c", priority = Priority.MEDIUM),
+            Item(id = "4", text = "d", priority = Priority.HIGH)
+        )
+        assertEquals(listOf("2", "4", "3", "1"), DataOps.displayOrder(items, ItemSort.PRIORITY).map { it.id })
+        assertEquals(listOf("1", "2", "3", "4"), DataOps.displayOrder(items, ItemSort.ADDED).map { it.id })
+    }
+
+    @Test fun dueTimeNeedsADate() {
+        val d0 = defaultData()
+        val tab = d0.tabs[0].id
+        val (d1, created) = DataOps.addItems(d0, tab, listOf("a"))
+        val id = created[0].id
+        val d2 = DataOps.setDue(d1, tab, id, "2026-11-02", "14:00")
+        assertEquals("14:00", d2.itemsOf(tab)[0].dueTime)
+        val d3 = DataOps.setDue(d2, tab, id, null, "14:00")
+        assertNull(d3.itemsOf(tab)[0].dueDate)
+        assertNull(d3.itemsOf(tab)[0].dueTime)
     }
 
     @Test fun normalizeRepairsReferences() {

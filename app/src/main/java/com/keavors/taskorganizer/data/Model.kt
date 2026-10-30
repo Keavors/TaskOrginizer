@@ -1,5 +1,7 @@
 package com.keavors.taskorganizer.data
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.UUID
@@ -39,18 +41,33 @@ data class Tab(
     val updatedAt: Long = 0
 )
 
+/** Importance of an entry: gray, yellow, red. Ordered from the least important. */
+@Serializable
+enum class Priority {
+    @SerialName("normal") NORMAL,
+    @SerialName("medium") MEDIUM,
+    @SerialName("high") HIGH;
+
+    fun next(): Priority = entries[(ordinal + 1) % entries.size]
+}
+
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class Item(
     val id: String,
     val text: String,
     val done: Boolean = false,
-    val important: Boolean = false,
+    val priority: Priority = Priority.NORMAL,
     /** Local calendar date, `yyyy-MM-dd`. */
     val dueDate: String? = null,
+    /** Local time `HH:mm` on [dueDate]; null = the whole day. */
+    val dueTime: String? = null,
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
     val completedAt: Long? = null,
-    val source: ItemSource = ItemSource.KEYBOARD
+    val source: ItemSource = ItemSource.KEYBOARD,
+    /** Versions up to 0.2 had only an "important" flag; [DataOps.normalize] turns it into a red [priority]. */
+    @EncodeDefault(EncodeDefault.Mode.NEVER) val important: Boolean = false
 )
 
 /** Deleted entries and tabs are kept for [TRASH_RETENTION_DAYS] days. Entries of one action share a batch id. */
@@ -126,6 +143,61 @@ enum class NewItemPosition {
     @SerialName("bottom") BOTTOM
 }
 
+/** Order of open entries: as added, or red first, then yellow, then gray. */
+@Serializable
+enum class ItemSort {
+    @SerialName("added") ADDED,
+    @SerialName("priority") PRIORITY
+}
+
+/** Complete look of the app: fonts, shapes, how entries, tabs and the input are drawn. */
+@Serializable
+enum class DesignStyle {
+    @SerialName("standard") STANDARD,
+    @SerialName("minimal") MINIMAL,
+    @SerialName("soft") SOFT,
+    @SerialName("sharp") SHARP,
+    @SerialName("terminal") TERMINAL,
+    @SerialName("paper") PAPER,
+    @SerialName("compact") COMPACT,
+    @SerialName("neon") NEON
+}
+
+/** Accent colors. WALLPAPER takes them from the wallpaper (Android 12+). */
+@Serializable
+enum class Palette {
+    @SerialName("indigo") INDIGO,
+    @SerialName("blue") BLUE,
+    @SerialName("teal") TEAL,
+    @SerialName("green") GREEN,
+    @SerialName("amber") AMBER,
+    @SerialName("red") RED,
+    @SerialName("pink") PINK,
+    @SerialName("violet") VIOLET,
+    @SerialName("graphite") GRAPHITE,
+    @SerialName("wallpaper") WALLPAPER
+}
+
+@Serializable
+data class ReminderSettings(
+    val enabled: Boolean = true,
+    /** Minutes before the due time; 0 = at the due time. */
+    val offsets: List<Int> = listOf(0),
+    /** After the due time, remind again every N minutes while the entry is not done; 0 = no repeats. */
+    val repeatMinutes: Int = 0,
+    /** How many repeats; 0 = until the entry is done. */
+    val repeatCount: Int = 3,
+    val snoozeMinutes: Int = 10,
+    /** Entries with a date but no time remind at this minute of the day; -1 = they do not remind. */
+    val allDayMinute: Int = -1,
+    /** Only entries of this level and above remind. */
+    val minPriority: Priority = Priority.NORMAL,
+    /** Show reminders missed while the phone was off (up to a day old). */
+    val showMissed: Boolean = true,
+    /** Alarm-clock alarms: never late, but the status bar shows an alarm icon. */
+    val alarmClock: Boolean = false
+)
+
 @Serializable
 data class SpeechSettings(
     /** Language of speech for the recognizer: "ru-RU" or "en-US". */
@@ -142,10 +214,14 @@ data class SpeechSettings(
 data class Settings(
     val schemaVersion: Int = SETTINGS_SCHEMA_VERSION,
     val theme: ThemeMode = ThemeMode.SYSTEM,
-    /** Colors from the wallpaper (Material You) instead of the app palette. */
-    val dynamicColor: Boolean = false,
+    val style: DesignStyle = DesignStyle.STANDARD,
+    val palette: Palette = Palette.INDIGO,
+    /** Pure black backgrounds in the dark theme. */
+    val pureBlack: Boolean = false,
     val newItemPosition: NewItemPosition = NewItemPosition.TOP,
-    val speech: SpeechSettings = SpeechSettings()
+    val sort: ItemSort = ItemSort.ADDED,
+    val speech: SpeechSettings = SpeechSettings(),
+    val reminders: ReminderSettings = ReminderSettings()
 )
 
 const val DATA_SCHEMA_VERSION = 1
