@@ -1,0 +1,3060 @@
+{
+ "large-v3 | ru | no prompt": {
+  "wer": 9.8,
+  "termAcc": 68.1,
+  "pureRuWer": 4.5,
+  "avgMs": 347,
+  "loadMs": 4591,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 473
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 356
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Телеграм про встречу в пятницу.",
+    "ms": 399
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Телеграм про встречу в пятницу.",
+    "ms": 388
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 296
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотрите на YouTube урок по Python.",
+    "ms": 284
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 298
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на гитхаб до вечера.",
+    "ms": 337
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 357
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 353
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать посаду вирсию Visual Studio Code.",
+    "ms": 351
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 333
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 330
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 330
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 270
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 272
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 392
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 352
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в Powerpoint для отдела.",
+    "ms": 343
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в Powerpoint для отдела.",
+    "ms": 432
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 351
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 351
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в обсидиан.",
+    "ms": 351
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из наушен в обсидиан.",
+    "ms": 355
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 305
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 308
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 340
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 340
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 294
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 294
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 304
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 306
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 350
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 351
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 384
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 407
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 305
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 311
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 317
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 316
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере Теплинг.",
+    "ms": 339
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере Теплинг.",
+    "ms": 332
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 410
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 294
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы поиск грейс-куэррел.",
+    "ms": 432
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 328
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 300
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 301
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 281
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 282
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить подписку с АЖПТ+.",
+    "ms": 315
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Чатпт+.",
+    "ms": 297
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 294
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 294
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 316
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 324
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 358
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 352
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 328
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 327
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 373
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 374
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 293
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 293
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по докеру на YouTube и не забыть купить продукты.",
+    "ms": 679
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Виндаус, потом написать Ивана в Телеграм, а вечером посмотреть урок по докеру на Ютубе и не забыть купить продукты.",
+    "ms": 816
+   }
+  ]
+ },
+ "large-v3 | ru | style prompt": {
+  "wer": 5.4,
+  "termAcc": 87.5,
+  "pureRuWer": 4.5,
+  "avgMs": 343,
+  "loadMs": 3757,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 464
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 363
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 375
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 372
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 301
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 302
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 301
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 301
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 327
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 326
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать посаду вирсию Visual Studio Code.",
+    "ms": 364
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 339
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 325
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 346
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 282
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 278
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 362
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 361
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 326
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 326
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 359
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 361
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 336
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из Notion в Obsidian.",
+    "ms": 325
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 313
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 314
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 347
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 349
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 302
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 308
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 314
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 313
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 367
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер Nvidia для видеокарты.",
+    "ms": 337
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 415
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 417
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 313
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 321
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 324
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 329
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере TIP-Link.",
+    "ms": 336
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере Tapling.",
+    "ms": 315
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 301
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 301
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы по Istgrease Quittle.",
+    "ms": 369
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 337
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 302
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 301
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 290
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 290
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить подписку в Shagipete+.",
+    "ms": 312
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Chatbot Plus.",
+    "ms": 289
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 300
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 310
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 324
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 331
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 361
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 362
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 336
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 335
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 381
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 382
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 302
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 301
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 676
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 684
+   }
+  ]
+ },
+ "large-v3 | ru | dictionary prompt": {
+  "wer": 2.7,
+  "termAcc": 97.2,
+  "pureRuWer": 6.8,
+  "avgMs": 356,
+  "loadMs": 3905,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 485
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 377
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 381
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 380
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 309
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 312
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 310
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 330
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 334
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 338
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать посаду в версию Visual Studio Code.",
+    "ms": 356
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 355
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 349
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 337
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 284
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 285
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 368
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 372
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 337
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 335
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 371
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 430
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 349
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из Notion в Obsidian.",
+    "ms": 333
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 327
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 403
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 356
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 357
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 322
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 320
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 321
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 327
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 368
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 370
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 429
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 429
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 321
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 338
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 332
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 342
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере TP-Link.",
+    "ms": 340
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере TP-Link.",
+    "ms": 332
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 309
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 307
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 351
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 347
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 309
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 310
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 297
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 332
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить подписку в ChatGPT Plus.",
+    "ms": 334
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку ChatPT Plus.",
+    "ms": 308
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 309
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 309
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 333
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 333
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 367
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 368
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 350
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 344
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 390
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 399
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20-го числа.",
+    "ms": 340
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 320
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 697
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 693
+   }
+  ]
+ },
+ "large-v3 | ru | dictionary prompt + VAD": {
+  "wer": 2.7,
+  "termAcc": 97.2,
+  "pureRuWer": 4.5,
+  "avgMs": 362,
+  "loadMs": 3914,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 490
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 385
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 396
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 399
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 319
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 320
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 316
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 323
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 344
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 344
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Качать пастырю версию Visual Studio Code.",
+    "ms": 369
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 356
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 341
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 350
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 298
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 294
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 384
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 378
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 343
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 344
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 377
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 380
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 352
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из Notion в Obsidian.",
+    "ms": 342
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 329
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 333
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 364
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 364
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 328
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 330
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 335
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 331
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 384
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 377
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 437
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 443
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 331
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 330
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 362
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 342
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере TP-Link.",
+    "ms": 341
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере TP-Link.",
+    "ms": 340
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 314
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Кинуть файлы в Google Drive.",
+    "ms": 318
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 354
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 354
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 318
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 318
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 303
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 312
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить подписку в ChatGPT Plus.",
+    "ms": 350
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку ChatPT Plus.",
+    "ms": 317
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 314
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 318
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 341
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 343
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 376
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 377
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 351
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 358
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 401
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 406
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 323
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 318
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 717
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 768
+   }
+  ]
+ },
+ "large-v3 | auto | style prompt": {
+  "wer": 6.4,
+  "termAcc": 87.5,
+  "pureRuWer": 4.5,
+  "avgMs": 518,
+  "loadMs": 3723,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 629
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 530
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 540
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 545
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 471
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 473
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 474
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 470
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 495
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 504
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать посаду версию Visual Studio Code.",
+    "ms": 513
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 507
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить Docker на домашнем сервере.",
+    "ms": 493
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 506
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 447
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 449
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 527
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 530
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 495
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 494
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 529
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 529
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 505
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из Notion в Obsidian.",
+    "ms": 502
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 481
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 486
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 516
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 518
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 474
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 470
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 485
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 483
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 529
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер Nvidia для видеокарты.",
+    "ms": 506
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 585
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 590
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 490
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 488
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 493
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 494
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере TIP-Link.",
+    "ms": 506
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере Tapling.",
+    "ms": 484
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 470
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 473
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы по Istgrease Quittle.",
+    "ms": 555
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 506
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 470
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 471
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 461
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 460
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Coupez votre pâte à piscine chez GPT+.",
+    "ms": 778
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Chatbot Plus.",
+    "ms": 498
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 477
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 471
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 496
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 496
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 530
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 533
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 513
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 511
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 556
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 554
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 474
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 473
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 853
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 858
+   }
+  ]
+ },
+ "large-v3-turbo | ru | no prompt": {
+  "wer": 8.3,
+  "termAcc": 73.6,
+  "pureRuWer": 4.5,
+  "avgMs": 189,
+  "loadMs": 2483,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 302
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 189
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 191
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Телеграм про встречу в пятницу.",
+    "ms": 198
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python'у.",
+    "ms": 185
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 177
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 177
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 177
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 189
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 189
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать посаду версию Visual Studio Code.",
+    "ms": 181
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code",
+    "ms": 182
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 184
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере",
+    "ms": 181
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 175
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 174
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 194
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться Сергеем в Zoom в 3 часа.",
+    "ms": 188
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в Powerpoint для отдела.",
+    "ms": 188
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPaint для отдела.",
+    "ms": 186
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 188
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "проверить почту в Gmail и ответить клиенту.",
+    "ms": 183
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в обсидиан.",
+    "ms": 192
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из наушен в обсидиан.",
+    "ms": 196
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 194
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить фотошип и обработать фотографии.",
+    "ms": 187
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 185
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 185
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 179
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на DigitalOcean",
+    "ms": 177
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Кубернетис на Курсире.",
+    "ms": 196
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 180
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 197
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 190
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 197
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 250
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "почитать документацию по TypeScript.",
+    "ms": 175
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 177
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 183
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 180
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутере Типлинк.",
+    "ms": 182
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере Типлинк.",
+    "ms": 185
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 177
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 176
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 184
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 185
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 178
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 178
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 173
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 173
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить патписку ХГПТ+.",
+    "ms": 183
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Чат ПТ+.",
+    "ms": 177
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 175
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 183
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 185
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 181
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 191
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 189
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 183
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 185
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "позвонить бабушке вечером и спросить про дачу.",
+    "ms": 191
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 201
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 176
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 175
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по докеру на YouTube и не забыть купить продукты.",
+    "ms": 260
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Иванов Telegram, а вечером посмотреть урок по докеру на YouTube и не забыть купить продукты.",
+    "ms": 258
+   }
+  ]
+ },
+ "large-v3-turbo | ru | style prompt": {
+  "wer": 7.1,
+  "termAcc": 83.3,
+  "pureRuWer": 9.1,
+  "avgMs": 190,
+  "loadMs": 2499,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 304
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 193
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 195
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 193
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 178
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотрите на YouTube урок по Python.",
+    "ms": 174
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 178
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 181
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 184
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 193
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать по себе версию Visual Studio Code.",
+    "ms": 184
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 191
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 194
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 187
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 173
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 173
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 194
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться Сергеем в Zoom в 3 часа.",
+    "ms": 190
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в Powerpoint для отдела.",
+    "ms": 188
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPaint для отдела.",
+    "ms": 188
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 191
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 191
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 193
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 185
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 179
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 181
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 189
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 190
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 181
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на DigitalOcean",
+    "ms": 178
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 180
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 180
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 189
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 190
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 202
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 206
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 180
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 187
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 184
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 189
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роут или типлинг.",
+    "ms": 184
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере TypeLink.",
+    "ms": 185
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 178
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 176
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать backup базы PostgreSQL.",
+    "ms": 178
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 194
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 178
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 181
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 176
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 184
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить патписку ХГПТ+.",
+    "ms": 187
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Chatpt+.",
+    "ms": 173
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 191
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 179
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 182
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 183
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 197
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 190
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 186
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 187
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 195
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 196
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20-го числа.",
+    "ms": 184
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20-го числа.",
+    "ms": 182
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по докеру на YouTube и не забыть купить продукты.",
+    "ms": 272
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Докеру на YouTube и не забыть купить продукты.",
+    "ms": 278
+   }
+  ]
+ },
+ "large-v3-turbo | ru | dictionary prompt": {
+  "wer": 4.9,
+  "termAcc": 90.3,
+  "pureRuWer": 6.8,
+  "avgMs": 195,
+  "loadMs": 2466,
+  "gpu": "ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6143 MiB):",
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 309
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 197
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 197
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Telegram про встречу в пятницу.",
+    "ms": 197
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 180
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотрите на YouTube урок по Python.",
+    "ms": 178
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 181
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 186
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 185
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 186
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Скачать пасаду версию Visual Studio Code.",
+    "ms": 191
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 193
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 189
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 193
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 193
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 178
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 192
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться Сергеем в Zoom в 3 часа.",
+    "ms": 195
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в Powerpoint для отдела.",
+    "ms": 188
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 189
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 194
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 199
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 189
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из наушен в Obsidian.",
+    "ms": 188
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 182
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 188
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 217
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 211
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 182
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на DigitalOcean.",
+    "ms": 184
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 183
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по Kubernetes на Coursera.",
+    "ms": 188
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 197
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер NVIDIA для видеокарты.",
+    "ms": 198
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 209
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 211
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 183
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 208
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 186
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 191
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роут или TP-Link.",
+    "ms": 187
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере TypeLink.",
+    "ms": 184
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 181
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 180
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 188
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы PostgreSQL.",
+    "ms": 190
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 180
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 185
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 178
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновить Android на планшете.",
+    "ms": 180
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить патписку, ChatGPT Plus.",
+    "ms": 193
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку ChatPT Plus.",
+    "ms": 184
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 180
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 183
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 193
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 188
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 193
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 193
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 188
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 212
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 198
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить про дачу.",
+    "ms": 230
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20-го числа.",
+    "ms": 184
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 182
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по докеру на YouTube и не забыть купить продукты.",
+    "ms": 273
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по Docker на YouTube и не забыть купить продукты.",
+    "ms": 281
+   }
+  ]
+ },
+ "parakeet-tdt-0.6b-v3 (CLI, incl. model load)": {
+  "wer": 14.5,
+  "termAcc": 55.6,
+  "pureRuWer": 13.6,
+  "avgMs": 1693,
+  "results": [
+   {
+    "clip": "s01_andrewmultilingual.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 2311
+   },
+   {
+    "clip": "s01_svetlana.mp3",
+    "text": "Обновить Windows и перезагрузить ноутбук.",
+    "ms": 1919
+   },
+   {
+    "clip": "s02_andrewmultilingual.mp3",
+    "text": "Написать Ивану в Телеграм про встречу в пятницу.",
+    "ms": 1675
+   },
+   {
+    "clip": "s02_svetlana.mp3",
+    "text": "Написать Ивану в Телеграм про встречу в пятницу.",
+    "ms": 1639
+   },
+   {
+    "clip": "s03_andrewmultilingual.mp3",
+    "text": "Посмотреть на YouTube урок по Python.",
+    "ms": 1738
+   },
+   {
+    "clip": "s03_svetlana.mp3",
+    "text": "Посмотреть на Ютуб урок по Пайтону.",
+    "ms": 1641
+   },
+   {
+    "clip": "s04_andrewmultilingual.mp3",
+    "text": "Залить проект на GitHub до вечера.",
+    "ms": 1637
+   },
+   {
+    "clip": "s04_svetlana.mp3",
+    "text": "Залить проект на Гитхаб до вечера.",
+    "ms": 1701
+   },
+   {
+    "clip": "s05_andrewmultilingual.mp3",
+    "text": "Купить маме новый iPhone на день рождения.",
+    "ms": 1737
+   },
+   {
+    "clip": "s05_svetlana.mp3",
+    "text": "Купить маме новый айфон на день рождения.",
+    "ms": 1625
+   },
+   {
+    "clip": "s06_andrewmultilingual.mp3",
+    "text": "Skatchat Pastadu Virsiu Visual Studio Code",
+    "ms": 1622
+   },
+   {
+    "clip": "s06_svetlana.mp3",
+    "text": "Скачать последнюю версию Visual Studio Code.",
+    "ms": 1715
+   },
+   {
+    "clip": "s07_andrewmultilingual.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 1707
+   },
+   {
+    "clip": "s07_svetlana.mp3",
+    "text": "Настроить докер на домашнем сервере.",
+    "ms": 1747
+   },
+   {
+    "clip": "s08_andrewmultilingual.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 1670
+   },
+   {
+    "clip": "s08_svetlana.mp3",
+    "text": "Отменить подписку на Netflix.",
+    "ms": 1723
+   },
+   {
+    "clip": "s09_andrewmultilingual.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 1794
+   },
+   {
+    "clip": "s09_svetlana.mp3",
+    "text": "Созвониться с Сергеем в Zoom в 3 часа.",
+    "ms": 1660
+   },
+   {
+    "clip": "s10_andrewmultilingual.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 1765
+   },
+   {
+    "clip": "s10_svetlana.mp3",
+    "text": "Сделать презентацию в PowerPoint для отдела.",
+    "ms": 1675
+   },
+   {
+    "clip": "s11_andrewmultilingual.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 1639
+   },
+   {
+    "clip": "s11_svetlana.mp3",
+    "text": "Проверить почту в Gmail и ответить клиенту.",
+    "ms": 1638
+   },
+   {
+    "clip": "s12_andrewmultilingual.mp3",
+    "text": "Перенести заметки из наушин в обсидиан.",
+    "ms": 1642
+   },
+   {
+    "clip": "s12_svetlana.mp3",
+    "text": "Перенести заметки из наушин в обсидиан.",
+    "ms": 1630
+   },
+   {
+    "clip": "s13_andrewmultilingual.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 1735
+   },
+   {
+    "clip": "s13_svetlana.mp3",
+    "text": "Установить Photoshop и обработать фотографии.",
+    "ms": 1760
+   },
+   {
+    "clip": "s14_andrewmultilingual.mp3",
+    "text": "Разобраться с ошибкой в React-компоненте.",
+    "ms": 1732
+   },
+   {
+    "clip": "s14_svetlana.mp3",
+    "text": "Разобраться с ошибкой в реакт-компоненте.",
+    "ms": 1623
+   },
+   {
+    "clip": "s15_andrewmultilingual.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 1785
+   },
+   {
+    "clip": "s15_svetlana.mp3",
+    "text": "Оплатить хостинг на Digital Ocean.",
+    "ms": 1629
+   },
+   {
+    "clip": "s16_andrewmultilingual.mp3",
+    "text": "Пройти курс по кубернетис на Курсере.",
+    "ms": 1622
+   },
+   {
+    "clip": "s16_svetlana.mp3",
+    "text": "Пройти курс по кубернетес на Курсере.",
+    "ms": 1765
+   },
+   {
+    "clip": "s17_andrewmultilingual.mp3",
+    "text": "Обновить драйвер Nvidia для видеокарты.",
+    "ms": 1706
+   },
+   {
+    "clip": "s17_svetlana.mp3",
+    "text": "Обновить драйвер Nvidia для видеокарты.",
+    "ms": 1628
+   },
+   {
+    "clip": "s18_andrewmultilingual.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 1645
+   },
+   {
+    "clip": "s18_svetlana.mp3",
+    "text": "Сохранить таблицу в Excel и отправить бухгалтеру.",
+    "ms": 1632
+   },
+   {
+    "clip": "s19_andrewmultilingual.mp3",
+    "text": "Почитать документацию по TyperScript.",
+    "ms": 1733
+   },
+   {
+    "clip": "s19_svetlana.mp3",
+    "text": "Почитать документацию по TypeScript.",
+    "ms": 1640
+   },
+   {
+    "clip": "s20_andrewmultilingual.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 1652
+   },
+   {
+    "clip": "s20_svetlana.mp3",
+    "text": "Поиграть с друзьями в Steam в выходные.",
+    "ms": 1696
+   },
+   {
+    "clip": "s21_andrewmultilingual.mp3",
+    "text": "Настроить VPN на роутери Типлинг.",
+    "ms": 1730
+   },
+   {
+    "clip": "s21_svetlana.mp3",
+    "text": "Настроить VPN на роутере Типлинг.",
+    "ms": 1633
+   },
+   {
+    "clip": "s22_andrewmultilingual.mp3",
+    "text": "Skinut fajów Google Drive.",
+    "ms": 1647
+   },
+   {
+    "clip": "s22_svetlana.mp3",
+    "text": "Скинуть файлы в Google Drive.",
+    "ms": 1631
+   },
+   {
+    "clip": "s23_andrewmultilingual.mp3",
+    "text": "Сделать бэкап базы поиск Grease Quirl.",
+    "ms": 1657
+   },
+   {
+    "clip": "s23_svetlana.mp3",
+    "text": "Сделать бэкап базы постгресс Queril.",
+    "ms": 1726
+   },
+   {
+    "clip": "s24_andrewmultilingual.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 1758
+   },
+   {
+    "clip": "s24_svetlana.mp3",
+    "text": "Написать пост в LinkedIn про новый проект.",
+    "ms": 1645
+   },
+   {
+    "clip": "s25_andrewmultilingual.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 1622
+   },
+   {
+    "clip": "s25_svetlana.mp3",
+    "text": "Обновите Android на планшете.",
+    "ms": 1636
+   },
+   {
+    "clip": "s26_andrewmultilingual.mp3",
+    "text": "Купить подписку Шагт.",
+    "ms": 1640
+   },
+   {
+    "clip": "s26_svetlana.mp3",
+    "text": "Купить подписку Чатпт плюс.",
+    "ms": 1714
+   },
+   {
+    "clip": "s27_andrewmultilingual.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 1744
+   },
+   {
+    "clip": "s27_svetlana.mp3",
+    "text": "Поставить Linux на старый компьютер.",
+    "ms": 1637
+   },
+   {
+    "clip": "s28_andrewmultilingual.mp3",
+    "text": "Записать голосовое в WhatsApp для Оли.",
+    "ms": 1739
+   },
+   {
+    "clip": "s28_svetlana.mp3",
+    "text": "Записать голосовое WhatsApp для Оли.",
+    "ms": 1679
+   },
+   {
+    "clip": "s29_andrewmultilingual.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 1623
+   },
+   {
+    "clip": "s29_svetlana.mp3",
+    "text": "Записаться к стоматологу на понедельник.",
+    "ms": 1630
+   },
+   {
+    "clip": "s30_andrewmultilingual.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 1735
+   },
+   {
+    "clip": "s30_svetlana.mp3",
+    "text": "Купить молоко, хлеб и яйца.",
+    "ms": 1638
+   },
+   {
+    "clip": "s31_andrewmultilingual.mp3",
+    "text": "Позвонить бабушке вечером и спросить продачу.",
+    "ms": 1630
+   },
+   {
+    "clip": "s31_svetlana.mp3",
+    "text": "Позвонить бабушке вечером и спросить продачу.",
+    "ms": 1634
+   },
+   {
+    "clip": "s32_andrewmultilingual.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 1632
+   },
+   {
+    "clip": "s32_svetlana.mp3",
+    "text": "Оплатить квартиру до 20 числа.",
+    "ms": 1625
+   },
+   {
+    "clip": "s33_andrewmultilingual.mp3",
+    "text": "Завтра утром нужно обновить Windows, потом написать Ивану в Telegram, а вечером посмотреть урок по докеру на ютубе и не забыть купить продукты.",
+    "ms": 1780
+   },
+   {
+    "clip": "s33_svetlana.mp3",
+    "text": "Завтра утром нужно обновить виндаус, потом написать Ивану в Телеграм, а вечером посмотреть урок по докеру на ютубе и не забыть купить продукты.",
+    "ms": 1751
+   }
+  ]
+ }
+}

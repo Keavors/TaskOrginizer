@@ -1,0 +1,51 @@
+{
+  "name": "task-organizer",
+  "productName": "Органайзер задач",
+  "version": "0.1.0",
+  "description": "Органайзер задач с вкладками и офлайн-диктовкой: русская речь с английскими словами.",
+  "main": "./out/main/index.js",
+  "author": "Keavors",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keavors/TaskOrginizer.git"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "fetch:whisper": "node scripts/fetch-whisper.mjs",
+    "postinstall": "node scripts/fetch-whisper.mjs --if-missing",
+    "dist": "npm run build && electron-builder --win --x64 --publish never",
+    "dist:dir": "npm run build && electron-builder --win --x64 --dir --publish never"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "electron": "44.10.0",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "immer": "^11.2.9",
+    "lucide-react": "^1.65.0",
+    "playwright-core": "^1.64.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
+    "zustand": "^5.0.16"
+  }
+}

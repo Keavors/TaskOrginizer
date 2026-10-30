@@ -1,0 +1,16 @@
+node_modules/
+out/
+dist/
+coverage/
+*.log
+*.tsbuildinfo
+
+# whisper.cpp runtime is downloaded by scripts/fetch-whisper.mjs
+resources/whisper/
+
+# local artifacts (screenshots from UI smoke tests, temp files)
+.artifacts/
+.tmp/
+
+.DS_Store
+Thumbs.db
