@@ -114,8 +114,9 @@ Java_com_keavors_taskorganizer_speech_WhisperNative_transcribe(JNIEnv *env, jobj
 
     whisper_full_params params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
     params.n_threads = threads > 0 ? threads : 4;
+    // "auto" lets Whisper pick the language. (detect_language would only detect it and return no text.)
     params.language = lang.empty() ? "ru" : lang.c_str();
-    params.detect_language = lang == "auto";
+    params.detect_language = false;
     params.translate = false;
     params.no_context = true;
     params.no_timestamps = true;

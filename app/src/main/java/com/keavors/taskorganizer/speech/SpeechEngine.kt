@@ -76,13 +76,20 @@ class SpeechEngine(private val context: Context, private val files: ModelFiles, 
         }
         _state.value = EngineState.Loading
         val started = SystemClock.elapsedRealtime()
-        if (!backendsReady) {
-            WhisperNative.initBackends(context.applicationInfo.nativeLibraryDir)
-            systemInfo = WhisperNative.systemInfo()
-            Log.i(TAG, "system: $systemInfo")
-            backendsReady = true
+        val h = try {
+            if (!backendsReady) {
+                WhisperNative.initBackends(context.applicationInfo.nativeLibraryDir)
+                systemInfo = WhisperNative.systemInfo()
+                Log.i(TAG, "system: $systemInfo")
+                backendsReady = true
+            }
+            WhisperNative.initContext(files.model.absolutePath)
+        } catch (e: Throwable) {
+            // A missing or incompatible native library must not take the whole app down.
+            Log.e(TAG, "native init failed", e)
+            _state.value = EngineState.Failed("Движок распознавания не запустился на этом телефоне: ${e.javaClass.simpleName}")
+            return false
         }
-        val h = WhisperNative.initContext(files.model.absolutePath)
         if (h == 0L) {
             _state.value = EngineState.Failed("Не удалось загрузить модель. Возможно, файл повреждён: удалите её в настройках и скачайте заново.")
             return false

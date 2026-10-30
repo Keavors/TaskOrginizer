@@ -102,7 +102,9 @@ class DictationController(private val engine: SpeechEngine, private val store: S
                 }
             } catch (e: SpeechException) {
                 _messages.emit(e.message ?: "Ошибка распознавания.")
-            } catch (e: Exception) {
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Throwable) {
                 _messages.emit("Ошибка распознавания: ${e.message ?: e.javaClass.simpleName}")
             } finally {
                 _phase.value = DictationPhase.Idle
