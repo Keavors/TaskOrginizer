@@ -21,10 +21,6 @@ fun doneCount(n: Int) = "$n ${plural(n, "выполнена", "выполнен�
 fun notesCount(n: Int) = "$n ${plural(n, "заметка", "заметки", "заметок")}"
 fun entriesCount(n: Int) = "$n ${plural(n, "запись", "записи", "записей")}"
 
-fun formatMb(bytes: Long): String = "%.0f МБ".format(Locale("ru"), bytes / 1_048_576.0)
-
-fun formatSeconds(seconds: Double): String = "%.1f с".format(Locale("ru"), seconds)
-
 fun formatClock(seconds: Long): String = "%d:%02d".format(seconds / 60, seconds % 60)
 
 /** Due date chip: text and how urgent it is. */

@@ -173,19 +173,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun deleteTerm(termId: String) = store.update { DataOps.deleteTerm(it, termId) }
 
-    // ------------------------------------------------------------------ settings & model
+    // ------------------------------------------------------------------ settings
 
     fun updateSettings(change: (Settings) -> Settings) = store.updateSettings(change)
-
-    fun downloadModel() = services.downloader.start()
-
-    fun cancelDownload() = services.downloader.cancel()
-
-    fun deleteModel() {
-        services.engine.onModelRemoved()
-        services.modelFiles.deleteModel()
-        message("Модель удалена")
-    }
 
     // ------------------------------------------------------------------ export / import
 

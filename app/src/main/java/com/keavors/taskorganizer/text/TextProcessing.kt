@@ -73,61 +73,6 @@ object Dictionary {
     }
 }
 
-/** Removes text Whisper is known to invent on silence or noise (subtitle credits it learned from YouTube). */
-object Cleanup {
-    private const val INITIALS_NAME = "(?:\\s*[а-яё]\\.\\s?[а-яё]+)"
-    private val flags = setOf(RegexOption.IGNORE_CASE)
-
-    private val removeAnywhere = listOf(
-        Regex("редактор субтитров$INITIALS_NAME*[.!?]?", flags),
-        Regex("корректор$INITIALS_NAME+[.!?]?", flags),
-        Regex("субтитры\\s+(?:сделал|сделаны|создавал|создал|делал|подготовил|подогнал|создавались)[^.!?\\n]*[.!?]?", flags),
-        Regex("dima\\s?torzok", flags),
-        Regex("\\[(?:музыка|смех|аплодисменты|шум|тишина|music|laughter|applause|silence|blank_audio|noise)[^\\]]*]", flags),
-        Regex("\\((?:музыка|смех|аплодисменты|шум|тишина|music|laughter|applause)[^)]*\\)", flags),
-        Regex("[♪♫]+")
-    )
-
-    private val dropIfWhole = listOf(
-        Regex("^продолжение следует$", flags),
-        Regex("^спасибо за (?:просмотр|внимание)$", flags),
-        Regex("^(?:подписывайтесь|подпишитесь) на (?:наш )?канал$", flags),
-        Regex("^ставьте лайки?(?: и подписывайтесь на канал)?$", flags),
-        Regex("^thank you(?: for watching)?$", flags)
-    )
-
-    fun clean(raw: String): String {
-        var t = raw
-        for (re in removeAnywhere) t = re.replace(t, " ")
-        t = t.replace(Regex("\\s+"), " ").replace(Regex("\\s+([,.!?;:…])"), "$1").trim()
-        val bare = t.replace(Regex("[.!?…\\s]+$"), "").trim()
-        return if (bare.isEmpty() || dropIfWhole.any { it.matches(bare) }) "" else t
-    }
-}
-
-/** The text prompt Whisper sees before the audio (see docs/ASR-BENCHMARK.md). */
-object RecognitionPrompt {
-    /** Shows Whisper a Russian sentence that keeps English names in Latin script. */
-    const val STYLE = "Список дел: открыть Slack, проверить задачи в Jira, обновить Chrome и макет в Figma."
-
-    /** Whisper keeps only the last ~224 prompt tokens; stay well below that. */
-    const val MAX_CHARS = 450
-
-    fun build(terms: List<String>, maxChars: Int = MAX_CHARS): String {
-        val seen = mutableSetOf<String>()
-        val unique = terms.map { it.trim().replace(Regex("\\s+"), " ") }.filter { it.isNotEmpty() && seen.add(it.lowercase()) }
-        if (unique.isEmpty()) return STYLE
-        val head = "$STYLE Термины: "
-        var list = ""
-        for (t in unique) {
-            val next = if (list.isEmpty()) t else "$list, $t"
-            if (head.length + next.length + 1 > maxChars) break
-            list = next
-        }
-        return if (list.isEmpty()) STYLE else "$head$list."
-    }
-}
-
 /** A correction the user made to dictated text, worth remembering: "докер" -> "Docker". */
 data class CorrectionSuggestion(val from: String, val to: String)
 

@@ -87,7 +87,7 @@ data class TrashedTab(
 
 /**
  * A word the user cares about (usually an English name) and the ways the
- * recognizer mishears it. [text] goes into the recognition prompt; every
+ * recognizer writes it. [text] is passed to the recognizer as a hint; every
  * variant is replaced with [text] after recognition.
  */
 @Serializable
@@ -128,16 +128,14 @@ enum class NewItemPosition {
 
 @Serializable
 data class SpeechSettings(
-    /** "ru" (Russian with English names), "auto" or "en". */
-    val language: String = "ru",
+    /** Language of speech for the recognizer: "ru-RU" or "en-US". */
+    val language: String = "ru-RU",
+    /** Recognition service: empty = the phone's default, "on-device" or a service component name. */
+    val service: String = "",
+    /** Ask the recognizer to work on the phone only, without internet. */
+    val offlineOnly: Boolean = true,
     /** Add the entry right after dictation instead of leaving it in the input for review. */
-    val autoSubmit: Boolean = false,
-    /** Minutes to keep the model in memory after the app goes to the background; -1 = always. */
-    val keepLoadedMinutes: Int = 10,
-    /** Shorter encoder window for short phrases: several times faster. */
-    val fastMode: Boolean = true,
-    /** CPU threads; 0 = automatic. */
-    val threads: Int = 0
+    val autoSubmit: Boolean = false
 )
 
 @Serializable

@@ -137,10 +137,11 @@ class DataOpsTest {
     }
 
     @Test fun unknownValuesFallBackToDefaults() {
-        val json = """{"theme":"neon","speech":{"language":"ru","threads":2},"unknown":1}"""
+        // "threads" was a setting of the old Whisper version: unknown now, so it is skipped.
+        val json = """{"theme":"neon","speech":{"language":"en-US","threads":2},"unknown":1}"""
         val s = AppJson.decodeFromString(Settings.serializer(), json)
         assertEquals(Settings().theme, s.theme)
-        assertEquals(2, s.speech.threads)
+        assertEquals("en-US", s.speech.language)
     }
 
     @Test fun normalizeRepairsReferences() {

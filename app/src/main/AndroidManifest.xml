@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Only for the one-time download of the speech model. Recognition itself is offline. -->
-    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Lets the app see and bind the phone's speech recognition services (Android 11+). -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
 
     <application
         android:name=".App"

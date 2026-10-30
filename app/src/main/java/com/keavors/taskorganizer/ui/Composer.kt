@@ -2,6 +2,7 @@ package com.keavors.taskorganizer.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.SystemClock
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -42,16 +43,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -72,6 +69,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -88,9 +86,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.keavors.taskorganizer.data.Tab
 import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.speech.DictationPhase
-import com.keavors.taskorganizer.speech.DownloadState
-import com.keavors.taskorganizer.speech.EngineState
-import com.keavors.taskorganizer.speech.ModelFiles
 import com.keavors.taskorganizer.text.Entries
 import kotlinx.coroutines.delay
 
@@ -108,12 +103,11 @@ private fun insertDictation(current: TextFieldValue, raw: String, kind: TabKind)
     return TextFieldValue(text, TextRange((before + gap + piece).length)) to piece
 }
 
-/** Bottom panel: model setup banner, learning card, recording bar and the input with the microphone. */
+/** Bottom panel: learning card, voice bar with the live text and the input with the microphone. */
 @Composable
 fun Composer(vm: MainViewModel, tab: Tab) {
     val dictation = vm.services.dictation
     val phase by dictation.phase.collectAsStateWithLifecycle()
-    val engine by vm.services.engine.state.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
     var field by rememberSaveable(tab.id, stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
     var dictated by remember(tab.id) { mutableStateOf<String?>(null) }
@@ -160,10 +154,9 @@ fun Composer(vm: MainViewModel, tab: Tab) {
             .imePadding()
             .padding(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 10.dp)
     ) {
-        if (engine == EngineState.NotInstalled) ModelBanner(vm)
         LearnCard(vm)
         AnimatedVisibility(phase != DictationPhase.Idle, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
-            VoiceBar(vm, phase, engine)
+            VoiceBar(vm, phase)
         }
         Row(verticalAlignment = Alignment.Bottom) {
             Surface(
@@ -179,7 +172,7 @@ fun Composer(vm: MainViewModel, tab: Tab) {
                             if (it.text.isBlank()) dictated = null
                         },
                         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                        cursorBrush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Sentences,
                             imeAction = if (tab.kind == TabKind.TASKS) ImeAction.Done else ImeAction.Default
@@ -221,14 +214,14 @@ fun Composer(vm: MainViewModel, tab: Tab) {
 @Composable
 private fun MicButton(phase: DictationPhase, level: Float, onPress: () -> Boolean, onRelease: () -> Unit) {
     val colors = MaterialTheme.colorScheme
-    val recording = phase is DictationPhase.Recording
-    val busy = phase == DictationPhase.Transcribing
-    val ring by animateFloatAsState(if (recording) 1f + level * 0.55f else 1f, label = "ring")
-    val container = if (recording) colors.error else colors.primary
-    val content = if (recording) colors.onError else colors.onPrimary
+    val listening = phase is DictationPhase.Listening
+    val busy = phase == DictationPhase.Finishing
+    val ring by animateFloatAsState(if (listening) 1f + level * 0.55f else 1f, label = "ring")
+    val container = if (listening) colors.error else colors.primary
+    val content = if (listening) colors.onError else colors.onPrimary
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(56.dp)) {
-        if (recording) {
+        if (listening) {
             Box(
                 Modifier
                     .size(56.dp)
@@ -260,7 +253,7 @@ private fun MicButton(phase: DictationPhase, level: Float, onPress: () -> Boolea
             Box(contentAlignment = Alignment.Center) {
                 when {
                     busy -> CircularProgressIndicator(Modifier.size(24.dp), color = content, strokeWidth = 2.5.dp)
-                    recording -> Icon(Icons.Rounded.Stop, "Остановить запись", Modifier.size(26.dp))
+                    listening -> Icon(Icons.Rounded.Stop, "Остановить", Modifier.size(26.dp))
                     else -> Icon(Icons.Rounded.Mic, "Надиктовать: нажмите или удерживайте", Modifier.size(26.dp))
                 }
             }
@@ -268,28 +261,31 @@ private fun MicButton(phase: DictationPhase, level: Float, onPress: () -> Boolea
     }
 }
 
+/** State of the dictation and the words recognized so far. */
 @Composable
-private fun VoiceBar(vm: MainViewModel, phase: DictationPhase, engine: EngineState) {
+private fun VoiceBar(vm: MainViewModel, phase: DictationPhase) {
     val colors = MaterialTheme.colorScheme
+    val dictation = vm.services.dictation
+    val partial by dictation.partial.collectAsStateWithLifecycle()
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = colors.surfaceContainerHigh,
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
     ) {
-        Row(Modifier.padding(start = 16.dp, end = 6.dp, top = 6.dp, bottom = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-            when (phase) {
-                is DictationPhase.Recording -> {
+        Column(Modifier.padding(start = 16.dp, end = 6.dp, top = 6.dp, bottom = 6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (phase is DictationPhase.Listening) {
                     val pulse = rememberInfiniteTransition(label = "pulse")
                     val alpha by pulse.animateFloat(1f, 0.25f, infiniteRepeatable(tween(700), RepeatMode.Reverse), label = "dot")
                     Box(Modifier.size(10.dp).graphicsLayer { this.alpha = alpha }.clip(CircleShape).background(colors.error))
                     Spacer(Modifier.width(10.dp))
                     Text("Говорите", style = MaterialTheme.typography.labelLarge)
                     Spacer(Modifier.width(8.dp))
-                    var now by remember { mutableLongStateOf(android.os.SystemClock.elapsedRealtime()) }
+                    var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
                     LaunchedEffect(Unit) {
                         while (true) {
                             delay(250)
-                            now = android.os.SystemClock.elapsedRealtime()
+                            now = SystemClock.elapsedRealtime()
                         }
                     }
                     Text(
@@ -299,21 +295,26 @@ private fun VoiceBar(vm: MainViewModel, phase: DictationPhase, engine: EngineSta
                     )
                     Spacer(Modifier.width(12.dp))
                     LevelBars(vm, Modifier.weight(1f).height(28.dp))
-                    TextButton(onClick = { vm.services.dictation.cancel() }) { Text("Отмена") }
-                }
-                else -> {
+                } else {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(12.dp))
-                    Text(
-                        if (engine == EngineState.Loading) "Загружаю модель…" else "Распознаю…",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.weight(1f).padding(vertical = 12.dp)
-                    )
+                    Text("Распознаю…", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f).padding(vertical = 12.dp))
                 }
+                TextButton(onClick = { dictation.cancel() }) { Text("Отмена") }
+            }
+            if (partial.isNotBlank()) {
+                // The newest words matter most: long text is cut from the start.
+                Text(
+                    if (partial.length > LIVE_TEXT_CHARS) "…" + partial.takeLast(LIVE_TEXT_CHARS) else partial,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(end = 10.dp, bottom = 8.dp)
+                )
             }
         }
     }
 }
+
+private const val LIVE_TEXT_CHARS = 200
 
 @Composable
 private fun LevelBars(vm: MainViewModel, modifier: Modifier) {
@@ -370,56 +371,6 @@ private fun LearnCard(vm: MainViewModel) {
                 if (learn.size > 1) {
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                         TextButton(onClick = { vm.rememberCorrections(learn) }) { Text("Запомнить все") }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/** Shown until the speech model is on the phone. */
-@Composable
-private fun ModelBanner(vm: MainViewModel) {
-    val download by vm.services.downloader.state.collectAsStateWithLifecycle()
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Text("Голосовой ввод", style = MaterialTheme.typography.titleSmall)
-            Spacer(Modifier.height(4.dp))
-            when (val d = download) {
-                is DownloadState.Downloading -> {
-                    Text(
-                        "Скачиваю модель: ${formatMb(d.received)} из ${formatMb(d.total)}" +
-                            if (d.bytesPerSecond > 0) " · ${formatMb(d.bytesPerSecond)}/с" else "",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    LinearProgressIndicator(progress = { d.received / d.total.toFloat() }, modifier = Modifier.fillMaxWidth())
-                    TextButton(onClick = { vm.cancelDownload() }) { Text("Отмена") }
-                }
-                is DownloadState.Verifying -> {
-                    Text("Проверяю файл…", style = MaterialTheme.typography.bodySmall)
-                    Spacer(Modifier.height(8.dp))
-                    LinearProgressIndicator(progress = { d.checked / d.total.toFloat() }, modifier = Modifier.fillMaxWidth())
-                }
-                else -> {
-                    Text(
-                        (if (download is DownloadState.Failed) (download as DownloadState.Failed).message + "\n\n" else "") +
-                            "Распознавание работает прямо на телефоне, без интернета. Один раз нужно скачать модель ${ModelFiles.MODEL_TITLE} (874 МБ), лучше по Wi‑Fi.",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    Row {
-                        Button(onClick = { vm.downloadModel() }) {
-                            Icon(Icons.Outlined.Download, null, Modifier.size(18.dp))
-                            Spacer(Modifier.width(8.dp))
-                            Text(if (download is DownloadState.Failed) "Повторить" else "Скачать")
-                        }
-                        Spacer(Modifier.width(8.dp))
-                        FilledTonalButton(onClick = { vm.screen = Screen.SETTINGS }) { Text("Подробнее") }
                     }
                 }
             }

@@ -46,8 +46,8 @@ import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.DictionaryTerm
 
 /**
- * Words the recognizer should write correctly. The words themselves go into the
- * recognition prompt; the variants are replaced after recognition.
+ * Words dictation should write correctly. The words are passed to the recognizer
+ * as hints; the variants are replaced after recognition.
  */
 @Composable
 fun DictionaryScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
@@ -66,8 +66,8 @@ fun DictionaryScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostSta
         ) {
             item {
                 Text(
-                    "Добавьте названия, которые вы часто говорите: GitHub, Docker, имена. Модель будет ждать их и писать правильно. " +
-                        "«Варианты» — как она ошибается («гитхаб»): такие слова заменяются автоматически, с любыми окончаниями. " +
+                    "Добавьте названия, которые вы часто говорите: GitHub, Docker, имена. " +
+                        "«Варианты» — как их пишет распознавание («гитхаб»): такие слова заменяются автоматически, с любыми окончаниями. " +
                         "Если вы исправите надиктованное слово вручную, приложение само предложит его запомнить.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -141,7 +141,7 @@ private fun TermCard(vm: MainViewModel, term: DictionaryTerm) {
         }
     }
     if (addVariant) {
-        TextInputDialog("Как модель ошибается", "", "Например, гитхаб", "Добавить", onDismiss = { addVariant = false }) {
+        TextInputDialog("Как пишет распознавание", "", "Например, гитхаб", "Добавить", onDismiss = { addVariant = false }) {
             addVariant = false
             vm.updateTerm(term.id, variants = term.variants + it)
         }

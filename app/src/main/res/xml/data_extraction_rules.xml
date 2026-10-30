@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Back up and transfer tasks and settings, but never the large speech model. -->
+<!-- Back up and transfer tasks and settings. -->
 <data-extraction-rules>
     <cloud-backup>
         <include domain="file" path="data" />

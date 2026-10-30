@@ -7,24 +7,13 @@ plugins {
 android {
     namespace = "com.keavors.taskorganizer"
     compileSdk = 37
-    ndkVersion = "29.0.14206865"
 
     defaultConfig {
         applicationId = "com.keavors.taskorganizer"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
-
-        ndk {
-            // Modern phones only: whisper.cpp needs 64-bit ARM to be usable.
-            abiFilters += listOf("arm64-v8a")
-        }
-        externalNativeBuild {
-            cmake {
-                arguments += listOf("-DANDROID_STL=c++_shared")
-            }
-        }
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     buildTypes {
@@ -37,13 +26,6 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.31.6"
-        }
-    }
-
     buildFeatures {
         compose = true
     }
@@ -51,14 +33,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    packaging {
-        // ggml picks the best CPU variant at run time and loads it from the
-        // native library folder, so the libraries must be extracted to disk.
-        jniLibs {
-            useLegacyPackaging = true
-        }
     }
 }
 

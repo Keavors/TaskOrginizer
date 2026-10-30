@@ -3,7 +3,6 @@ package com.keavors.taskorganizer.ui
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,24 +12,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -51,16 +50,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.keavors.taskorganizer.BuildConfigInfo
 import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.NewItemPosition
 import com.keavors.taskorganizer.data.ThemeMode
-import com.keavors.taskorganizer.speech.DownloadState
-import com.keavors.taskorganizer.speech.EngineState
-import com.keavors.taskorganizer.speech.ModelFiles
+import com.keavors.taskorganizer.speech.RecognitionServices
+import com.keavors.taskorganizer.speech.speechLanguageTag
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -121,13 +119,15 @@ private fun SwitchRow(title: String, subtitle: String?, checked: Boolean, onChan
 }
 
 @Composable
-private fun NavRow(icon: ImageVector, title: String, subtitle: String?, onClick: () -> Unit) {
+private fun NavRow(icon: ImageVector?, title: String, subtitle: String?, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.width(16.dp))
+        if (icon != null) {
+            Icon(icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(Modifier.width(16.dp))
+        }
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -176,34 +176,28 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
         ) {
             item {
                 SettingsSection("Голосовой ввод") {
-                    ModelCard(vm)
+                    ServiceRow(vm, speech.service)
                     HorizontalDivider()
                     ChoiceRow(
                         "Язык речи",
-                        if (speech.language == "ru") "Русский: английские названия пишутся латиницей" else null,
-                        listOf("ru" to "Русский", "auto" to "Авто", "en" to "English"),
-                        speech.language
+                        null,
+                        listOf("ru-RU" to "Русский", "en-US" to "English"),
+                        speechLanguageTag(speech.language)
                     ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(language = v)) } }
                     SwitchRow(
-                        "Быстрый режим",
-                        "Короткие фразы распознаются в разы быстрее. Если появятся ошибки — выключите.",
-                        speech.fastMode
-                    ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(fastMode = v)) } }
+                        "Только без интернета",
+                        "Речь распознаётся на телефоне и никуда не отправляется",
+                        speech.offlineOnly
+                    ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(offlineOnly = v)) } }
                     SwitchRow(
                         "Сразу добавлять надиктованное",
                         "Без проверки текста в поле ввода",
                         speech.autoSubmit
                     ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(autoSubmit = v)) } }
-                    ChoiceRow(
-                        "Держать модель в памяти",
-                        "После того как приложение свёрнуто. Пока модель в памяти, диктовка начинается мгновенно.",
-                        listOf(1 to "1 мин", 10 to "10 мин", 60 to "1 час", -1 to "Всегда"),
-                        speech.keepLoadedMinutes
-                    ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(keepLoadedMinutes = v)) } }
                     NavRow(
                         Icons.AutoMirrored.Outlined.MenuBook,
                         "Словарь",
-                        if (data.dictionary.isEmpty()) "Названия, которые модель должна писать правильно" else "Слов: ${data.dictionary.size}"
+                        if (data.dictionary.isEmpty()) "Как писать английские названия: «гитхаб» → GitHub" else "Слов: ${data.dictionary.size}"
                     ) { vm.screen = Screen.DICTIONARY }
                 }
             }
@@ -246,15 +240,11 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
                         Text("Органайзер задач ${BuildConfigInfo.versionName(vm.getApplication())}", style = MaterialTheme.typography.bodyLarge)
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "Распознавание речи: ${ModelFiles.MODEL_TITLE} через whisper.cpp, полностью на телефоне. " +
-                                "VAD: Silero. Каждый день делается резервная копия данных (хранятся последние 14).",
+                            "Распознавание речи — встроенная служба телефона, та же, что у голосового ввода. " +
+                                "Каждый день делается резервная копия данных (хранятся последние 14).",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        vm.services.engine.systemInfo?.let {
-                            Spacer(Modifier.height(8.dp))
-                            Text("Процессор: $it", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
                     }
                 }
             }
@@ -271,75 +261,56 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
     }
 }
 
+/** Which of the phone's speech recognizers dictation uses. */
 @Composable
-private fun ModelCard(vm: MainViewModel) {
-    val engine by vm.services.engine.state.collectAsStateWithLifecycle()
-    val download by vm.services.downloader.state.collectAsStateWithLifecycle()
-    val last by vm.services.engine.lastRun.collectAsStateWithLifecycle()
-    var confirmDelete by remember { mutableStateOf(false) }
-
-    Column(Modifier.padding(16.dp)) {
-        Text(ModelFiles.MODEL_TITLE, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-        Text(
-            "874 МБ · работает без интернета · пишет английские названия латиницей",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.height(12.dp))
-        when {
-            engine == EngineState.NotInstalled -> when (val d = download) {
-                is DownloadState.Downloading -> {
-                    Text("Скачано ${formatMb(d.received)} из ${formatMb(d.total)}" + if (d.bytesPerSecond > 0) " · ${formatMb(d.bytesPerSecond)}/с" else "")
-                    Spacer(Modifier.height(8.dp))
-                    LinearProgressIndicator(progress = { d.received / d.total.toFloat() }, modifier = Modifier.fillMaxWidth())
-                    TextButton(onClick = { vm.cancelDownload() }) { Text("Отмена") }
-                }
-                is DownloadState.Verifying -> {
-                    Text("Проверяю файл…")
-                    Spacer(Modifier.height(8.dp))
-                    LinearProgressIndicator(progress = { d.checked / d.total.toFloat() }, modifier = Modifier.fillMaxWidth())
-                }
-                else -> {
-                    if (d is DownloadState.Failed) {
-                        Text(d.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                        Spacer(Modifier.height(8.dp))
-                    }
-                    Button(onClick = { vm.downloadModel() }) {
-                        Icon(Icons.Outlined.Download, null, Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Скачать модель")
-                    }
-                }
-            }
-            else -> {
-                val status = when (engine) {
-                    EngineState.Loading -> "Загружается в память…"
-                    EngineState.Ready, EngineState.Busy -> "Готова, загружена в память"
-                    EngineState.Unloaded -> "Установлена · загрузится при диктовке"
-                    is EngineState.Failed -> (engine as EngineState.Failed).message
-                    else -> ""
-                }
-                Text(status, color = if (engine is EngineState.Failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface)
-                last?.let {
-                    Text(
-                        "Последняя фраза: ${formatSeconds(it.audioSeconds)} речи распознаны за ${formatSeconds(it.processingMs / 1000.0)}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = { confirmDelete = true }) { Text("Удалить модель") }
-                }
-            }
-        }
+private fun ServiceRow(vm: MainViewModel, selected: String) {
+    val context = LocalContext.current
+    var picking by remember { mutableStateOf(false) }
+    // Read again whenever the picker opens or closes: services can be installed or removed meanwhile.
+    val options = remember(picking) { RecognitionServices.options(context) }
+    val systemDefault = remember(picking) { RecognitionServices.systemDefault(context) }
+    val defaultLabel = systemDefault?.let { "Как в телефоне: ${it.label}" } ?: "Как в телефоне"
+    val current = if (selected.isEmpty()) defaultLabel
+    else options.firstOrNull { it.id == selected }?.label ?: "$defaultLabel (выбранная служба не найдена)"
+    val pick: (String) -> Unit = { id ->
+        picking = false
+        vm.updateSettings { it.copy(speech = it.speech.copy(service = id)) }
     }
 
-    if (confirmDelete) {
-        ConfirmDialog(
-            title = "Удалить модель?",
-            text = "Освободится 874 МБ. Голосовой ввод перестанет работать, пока вы не скачаете модель заново.",
-            confirmLabel = "Удалить",
-            onDismiss = { confirmDelete = false }
-        ) { vm.deleteModel() }
+    NavRow(null, "Служба распознавания", current) { picking = true }
+
+    if (picking) {
+        AlertDialog(
+            onDismissRequest = { picking = false },
+            title = { Text("Служба распознавания") },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    Text(
+                        "Обычно это Google или Samsung. Если без интернета ничего не распознаётся, выберите другую.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    ServiceOption(defaultLabel, "Служба по умолчанию в настройках Android", selected.isEmpty()) { pick("") }
+                    options.forEach { o -> ServiceOption(o.label, o.detail, o.id == selected) { pick(o.id) } }
+                }
+            },
+            confirmButton = { TextButton(onClick = { picking = false }) { Text("Закрыть") } }
+        )
+    }
+}
+
+@Composable
+private fun ServiceOption(title: String, subtitle: String?, selected: Boolean, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Spacer(Modifier.width(8.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
     }
 }

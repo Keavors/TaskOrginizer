@@ -1,15 +1,12 @@
 package com.keavors.taskorganizer
 
 import com.keavors.taskorganizer.data.DictionaryTerm
-import com.keavors.taskorganizer.text.Cleanup
 import com.keavors.taskorganizer.text.CorrectionSuggestion
 import com.keavors.taskorganizer.text.Corrections
 import com.keavors.taskorganizer.text.Dictionary
 import com.keavors.taskorganizer.text.Entries
-import com.keavors.taskorganizer.text.RecognitionPrompt
 import com.keavors.taskorganizer.text.Russian
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TextProcessingTest {
@@ -51,24 +48,6 @@ class TextProcessingTest {
         assertEquals(emptyList<CorrectionSuggestion>(), Corrections.suggest("Купить молоко", "Купить хлеб"))
         assertEquals(emptyList<CorrectionSuggestion>(), Corrections.suggest("нажать три раза", "нажать Retry раза"))
         assertEquals(emptyList<CorrectionSuggestion>(), Corrections.suggest("Обновить Windows", "Обновить Windows"))
-    }
-
-    @Test fun dropsWhisperHallucinations() {
-        assertEquals("", Cleanup.clean("Продолжение следует..."))
-        assertEquals("", Cleanup.clean("Субтитры сделал DimaTorzok"))
-        assertEquals("Купить хлеб.", Cleanup.clean("Купить хлеб. Редактор субтитров А.Синецкая Корректор А.Егорова"))
-        assertEquals("", Cleanup.clean("[Музыка]"))
-    }
-
-    @Test fun keepsNormalText() {
-        assertEquals("Позвонить маме", Cleanup.clean("  Позвонить   маме "))
-        assertEquals("Сказать спасибо за внимание коллегам", Cleanup.clean("Сказать спасибо за внимание коллегам"))
-    }
-
-    @Test fun promptListsUniqueTermsWithinLimit() {
-        assertEquals(RecognitionPrompt.STYLE, RecognitionPrompt.build(emptyList()))
-        assertEquals("${RecognitionPrompt.STYLE} Термины: Docker, GitHub.", RecognitionPrompt.build(listOf("Docker", "docker", " GitHub ")))
-        assertTrue(RecognitionPrompt.build((1..200).map { "Term$it" }).length <= RecognitionPrompt.MAX_CHARS)
     }
 
     @Test fun splitsLinesAndBullets() = assertEquals(
