@@ -20,12 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.Item
 import com.keavors.taskorganizer.data.Tab
+import com.keavors.taskorganizer.ui.theme.LocalDesign
 import com.keavors.taskorganizer.ui.theme.tabColor
 
 private fun norm(s: String) = s.lowercase().replace('ё', 'е')
@@ -101,9 +97,10 @@ fun SearchScreen(vm: MainViewModel, data: AppData) {
     val hits = remember(data, query) { search(data, query) }
     val colors = MaterialTheme.colorScheme
 
-    Column(Modifier.fillMaxSize().background(colors.background).statusBarsPadding().navigationBarsPadding().imePadding()) {
+    ScreenBackground {
+    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().imePadding()) {
         Row(Modifier.padding(horizontal = 4.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { vm.screen = Screen.MAIN }) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Назад") }
+            AppIconButton(LocalDesign.current.icons.back, "Назад", tint = colors.onSurface) { vm.screen = Screen.MAIN }
             Surface(shape = RoundedCornerShape(24.dp), color = colors.surfaceContainerHigh, modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     BasicTextField(
@@ -120,7 +117,7 @@ fun SearchScreen(vm: MainViewModel, data: AppData) {
                             }
                         }
                     )
-                    if (query.isNotEmpty()) IconButton(onClick = { query = "" }) { Icon(Icons.Outlined.Close, "Очистить") }
+                    if (query.isNotEmpty()) AppIconButton(LocalDesign.current.icons.close, "Очистить") { query = "" }
                 }
             }
             Spacer(Modifier.width(8.dp))
@@ -144,7 +141,7 @@ fun SearchScreen(vm: MainViewModel, data: AppData) {
                 ) {
                     when (hit) {
                         is Hit.TabHit -> {
-                            Icon(Icons.Outlined.Folder, null, tint = colors.onSurfaceVariant)
+                            Icon(LocalDesign.current.icons.folder, null, tint = colors.onSurfaceVariant)
                             Spacer(Modifier.width(14.dp))
                             Text(highlighted(hit.tab.title, query), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
                             Text("вкладка", style = MaterialTheme.typography.labelMedium, color = colors.onSurfaceVariant)
@@ -169,5 +166,6 @@ fun SearchScreen(vm: MainViewModel, data: AppData) {
                 }
             }
         }
+    }
     }
 }

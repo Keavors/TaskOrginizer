@@ -38,33 +38,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.MenuBook
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.FileDownload
-import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -102,6 +84,8 @@ import com.keavors.taskorganizer.reminders.ReminderNotifier
 import com.keavors.taskorganizer.reminders.ReminderText
 import com.keavors.taskorganizer.speech.RecognitionServices
 import com.keavors.taskorganizer.speech.speechLanguageTag
+import com.keavors.taskorganizer.ui.theme.ButtonLook
+import com.keavors.taskorganizer.ui.theme.LocalDesign
 import com.keavors.taskorganizer.ui.theme.TaskOrganizerTheme
 import com.keavors.taskorganizer.ui.theme.isDarkTheme
 import com.keavors.taskorganizer.ui.theme.paletteAccent
@@ -113,7 +97,7 @@ import java.time.LocalTime
 import java.util.Date
 import java.util.Locale
 
-/** Screen frame with a back arrow. Content stays above the navigation buttons. */
+/** Screen frame with a back arrow and the design's background. Content stays above the navigation buttons. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenScaffold(
@@ -123,41 +107,29 @@ fun ScreenScaffold(
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.navigationBarsPadding(),
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Назад") } },
-                actions = actions,
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
-            )
-        },
-        snackbarHost = { if (snackbar != null) SnackbarHost(snackbar) },
-        containerColor = MaterialTheme.colorScheme.background,
-        content = content
-    )
-}
-
-@Composable
-fun SettingsSection(title: String, content: @Composable () -> Unit) {
-    Column(Modifier.padding(bottom = 20.dp)) {
-        Text(
-            title,
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+    val d = LocalDesign.current
+    ScreenBackground {
+        Scaffold(
+            modifier = Modifier.navigationBarsPadding(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(labelText(title), style = MaterialTheme.typography.titleLarge.glowing()) },
+                    navigationIcon = { AppIconButton(d.icons.back, "Назад", tint = MaterialTheme.colorScheme.onSurface, onClick = onBack) },
+                    actions = actions,
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, scrolledContainerColor = Color.Transparent)
+                )
+            },
+            snackbarHost = { if (snackbar != null) SnackbarHost(snackbar) },
+            containerColor = Color.Transparent,
+            content = content
         )
-        Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-            Column(Modifier.padding(vertical = 4.dp)) { content() }
-        }
     }
 }
 
 @Composable
 private fun SwitchRow(title: String, subtitle: String?, checked: Boolean, onChange: (Boolean) -> Unit) {
     Row(
-        Modifier.fillMaxWidth().clickable { onChange(!checked) }.padding(horizontal = 16.dp, vertical = 12.dp),
+        Modifier.fillMaxWidth().clickable { onChange(!checked) }.padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
@@ -165,25 +137,30 @@ private fun SwitchRow(title: String, subtitle: String?, checked: Boolean, onChan
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Spacer(Modifier.width(12.dp))
-        Switch(checked = checked, onCheckedChange = onChange)
+        AppSwitch(checked = checked, onCheckedChange = onChange)
     }
 }
 
 @Composable
 private fun NavRow(icon: ImageVector?, title: String, subtitle: String?, onClick: () -> Unit) {
+    val d = LocalDesign.current
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
-            Icon(icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            AppIcon(icon, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.width(16.dp))
         }
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Icon(Icons.Outlined.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (d.button == ButtonLook.BRACKETS) {
+            Text(">", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+        } else {
+            Icon(d.icons.chevron, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
     }
 }
 
@@ -192,27 +169,16 @@ private fun NavRow(icon: ImageVector?, title: String, subtitle: String?, onClick
 private fun ActionRow(title: String, action: String, onClick: () -> Unit) {
     Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(title, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.error, modifier = Modifier.weight(1f))
-        TextButton(onClick = onClick) { Text(action) }
+        AppButton(action, onClick = onClick, kind = ButtonKind.PRIMARY)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun <T> ChoiceRow(title: String, subtitle: String?, options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
+private fun <T> ChoiceRow(title: String, options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit) {
     Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
         Text(title, style = MaterialTheme.typography.bodyLarge)
-        if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(10.dp))
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            options.forEachIndexed { index, (value, label) ->
-                SegmentedButton(
-                    selected = value == selected,
-                    onClick = { onSelect(value) },
-                    shape = SegmentedButtonDefaults.itemShape(index, options.size),
-                    label = { Text(label, maxLines = 1) }
-                )
-            }
-        }
+        AppSegmented(options, selected, onSelect)
     }
 }
 
@@ -228,21 +194,10 @@ private fun ChipsRow(title: String, content: @Composable FlowRowScope.() -> Unit
 }
 
 @Composable
-private fun Chip(label: String, selected: Boolean, dot: Color? = null, onClick: () -> Unit) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label) },
-        leadingIcon = if (dot != null) {
-            { Box(Modifier.size(10.dp).clip(CircleShape).background(dot)) }
-        } else null
-    )
-}
-
-@Composable
 fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     val speech = settings.speech
+    val icons = LocalDesign.current.icons
     var confirmImport by remember { mutableStateOf<Uri?>(null) }
 
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
@@ -258,12 +213,22 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
             modifier = Modifier.fillMaxSize()
         ) {
             item {
+                SettingsSection("Оформление") {
+                    StylePicker(settings) { v -> vm.updateSettings { it.copy(style = v) } }
+                    PalettePicker(settings) { v -> vm.updateSettings { it.copy(palette = v) } }
+                    ChoiceRow(
+                        "Тема",
+                        listOf(ThemeMode.SYSTEM to "Авто", ThemeMode.LIGHT to "Светлая", ThemeMode.DARK to "Тёмная"),
+                        settings.theme
+                    ) { v -> vm.updateSettings { it.copy(theme = v) } }
+                    SwitchRow("Чёрный фон", null, settings.pureBlack) { v -> vm.updateSettings { it.copy(pureBlack = v) } }
+                }
+            }
+            item {
                 SettingsSection("Голосовой ввод") {
                     ServiceRow(vm, speech.service)
-                    HorizontalDivider()
                     ChoiceRow(
                         "Язык речи",
-                        null,
                         listOf("ru-RU" to "Русский", "en-US" to "English"),
                         speechLanguageTag(speech.language)
                     ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(language = v)) } }
@@ -273,7 +238,7 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
                     SwitchRow("Сразу добавлять надиктованное", null, speech.autoSubmit) { v ->
                         vm.updateSettings { it.copy(speech = it.speech.copy(autoSubmit = v)) }
                     }
-                    NavRow(Icons.AutoMirrored.Outlined.MenuBook, "Словарь", if (data.dictionary.isEmpty()) null else "Слов: ${data.dictionary.size}") {
+                    NavRow(icons.book, "Словарь", if (data.dictionary.isEmpty()) null else "Слов: ${data.dictionary.size}") {
                         vm.screen = Screen.DICTIONARY
                     }
                 }
@@ -282,13 +247,11 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
                 SettingsSection("Список") {
                     ChoiceRow(
                         "Сортировка",
-                        null,
                         listOf(ItemSort.ADDED to "По дате", ItemSort.PRIORITY to "По важности"),
                         settings.sort
                     ) { v -> vm.updateSettings { it.copy(sort = v) } }
                     ChoiceRow(
                         "Новые записи",
-                        null,
                         listOf(NewItemPosition.TOP to "Сверху", NewItemPosition.BOTTOM to "Снизу"),
                         settings.newItemPosition
                     ) { v -> vm.updateSettings { it.copy(newItemPosition = v) } }
@@ -300,28 +263,15 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
                 }
             }
             item {
-                SettingsSection("Оформление") {
-                    StylePicker(settings) { v -> vm.updateSettings { it.copy(style = v) } }
-                    PalettePicker(settings) { v -> vm.updateSettings { it.copy(palette = v) } }
-                    ChoiceRow(
-                        "Тема",
-                        null,
-                        listOf(ThemeMode.SYSTEM to "Авто", ThemeMode.LIGHT to "Светлая", ThemeMode.DARK to "Тёмная"),
-                        settings.theme
-                    ) { v -> vm.updateSettings { it.copy(theme = v) } }
-                    SwitchRow("Чёрный фон", null, settings.pureBlack) { v -> vm.updateSettings { it.copy(pureBlack = v) } }
-                }
-            }
-            item {
                 SettingsSection("Данные") {
-                    NavRow(Icons.Outlined.DeleteSweep, "Корзина", if (data.trash.isEmpty()) null else "Удалённых: ${data.trash.size}") {
+                    NavRow(icons.trash, "Корзина", if (data.trash.isEmpty()) null else "Удалённых: ${data.trash.size}") {
                         vm.screen = Screen.TRASH
                     }
-                    NavRow(Icons.Outlined.FileUpload, "Сохранить копию в файл", null) {
+                    NavRow(icons.upload, "Сохранить копию в файл", null) {
                         val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
                         exportLauncher.launch("Органайзер задач $day.json")
                     }
-                    NavRow(Icons.Outlined.FileDownload, "Загрузить из файла", "Заменит текущие данные") {
+                    NavRow(icons.download, "Загрузить из файла", "Заменит текущие данные") {
                         importLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/plain"))
                     }
                 }
@@ -378,7 +328,7 @@ private fun ServiceRow(vm: MainViewModel, selected: String) {
                     options.forEach { o -> RadioOption(o.label, o.detail, o.id == selected) { pick(o.id) } }
                 }
             },
-            confirmButton = { TextButton(onClick = { picking = false }) { Text("Закрыть") } }
+            confirmButton = { AppButton("Закрыть", onClick = { picking = false }) }
         )
     }
 }
@@ -386,11 +336,11 @@ private fun ServiceRow(vm: MainViewModel, selected: String) {
 @Composable
 private fun RadioOption(title: String, subtitle: String?, selected: Boolean, onClick: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 6.dp),
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        RadioButton(selected = selected, onClick = onClick)
-        Spacer(Modifier.width(8.dp))
+        AppRadio(selected)
+        Spacer(Modifier.width(4.dp))
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -423,31 +373,33 @@ private fun ReminderSettingsRows(r: ReminderSettings, update: ((ReminderSettings
     ChipsRow("Когда") {
         (OFFSETS + r.offsets).distinct().sorted().forEach { m ->
             val on = m in r.offsets
-            Chip(offsetLabel(m), on) { update { it.copy(offsets = if (on) it.offsets - m else (it.offsets + m).distinct().sorted()) } }
+            AppChip(offsetLabel(m), on) { update { it.copy(offsets = if (on) it.offsets - m else (it.offsets + m).distinct().sorted()) } }
         }
-        Chip("Своё…", false) { customOffset = true }
+        AppChip("Своё…", false) { customOffset = true }
     }
     ChipsRow("Повторять после срока") {
-        REPEATS.forEach { m -> Chip(if (m == 0) "Нет" else "Каждые " + ReminderText.duration(m.toLong()), r.repeatMinutes == m) { update { it.copy(repeatMinutes = m) } } }
+        REPEATS.forEach { m ->
+            AppChip(if (m == 0) "Нет" else "Каждые " + ReminderText.duration(m.toLong()), r.repeatMinutes == m) { update { it.copy(repeatMinutes = m) } }
+        }
     }
     if (r.repeatMinutes > 0) {
         ChipsRow("Сколько раз") {
-            REPEAT_COUNTS.forEach { n -> Chip(countLabel(n), r.repeatCount == n) { update { it.copy(repeatCount = n) } } }
+            REPEAT_COUNTS.forEach { n -> AppChip(countLabel(n), r.repeatCount == n) { update { it.copy(repeatCount = n) } } }
         }
     }
     ChipsRow("Отложить на") {
-        SNOOZES.forEach { m -> Chip(ReminderText.duration(m.toLong()), r.snoozeMinutes == m) { update { it.copy(snoozeMinutes = m) } } }
+        SNOOZES.forEach { m -> AppChip(ReminderText.duration(m.toLong()), r.snoozeMinutes == m) { update { it.copy(snoozeMinutes = m) } } }
     }
     ChipsRow("Задачи без времени") {
         (ALL_DAY_TIMES + r.allDayMinute).distinct().forEach { m ->
-            Chip(if (m < 0) "Не напоминать" else "В " + clockLabel(m), r.allDayMinute == m) { update { it.copy(allDayMinute = m) } }
+            AppChip(if (m < 0) "Не напоминать" else "В " + clockLabel(m), r.allDayMinute == m) { update { it.copy(allDayMinute = m) } }
         }
-        Chip("Другое…", false) { allDayPicker = true }
+        AppChip("Другое…", false) { allDayPicker = true }
     }
     ChipsRow("Для задач") {
-        Chip("Все", r.minPriority == Priority.NORMAL, priorityColor(Priority.NORMAL)) { update { it.copy(minPriority = Priority.NORMAL) } }
-        Chip("Жёлтые и красные", r.minPriority == Priority.MEDIUM, priorityColor(Priority.MEDIUM)) { update { it.copy(minPriority = Priority.MEDIUM) } }
-        Chip("Только красные", r.minPriority == Priority.HIGH, priorityColor(Priority.HIGH)) { update { it.copy(minPriority = Priority.HIGH) } }
+        AppChip("Все", r.minPriority == Priority.NORMAL, priorityColor(Priority.NORMAL)) { update { it.copy(minPriority = Priority.NORMAL) } }
+        AppChip("Жёлтые и красные", r.minPriority == Priority.MEDIUM, priorityColor(Priority.MEDIUM)) { update { it.copy(minPriority = Priority.MEDIUM) } }
+        AppChip("Только красные", r.minPriority == Priority.HIGH, priorityColor(Priority.HIGH)) { update { it.copy(minPriority = Priority.HIGH) } }
     }
     SoundRow()
     SwitchRow("Пропущенные", "Показать после включения телефона", r.showMissed) { v -> update { it.copy(showMissed = v) } }
@@ -472,7 +424,7 @@ private fun SoundRow() {
     val context = LocalContext.current
     ChipsRow("Звук и вибрация") {
         listOf(Priority.NORMAL to "Обычные", Priority.MEDIUM to "Жёлтые", Priority.HIGH to "Красные").forEach { (p, label) ->
-            Chip(label, false, priorityColor(p)) {
+            AppChip(label, false, priorityColor(p)) {
                 val intent = Intent(SystemSettings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                     .putExtra(SystemSettings.EXTRA_APP_PACKAGE, context.packageName)
                     .putExtra(SystemSettings.EXTRA_CHANNEL_ID, ReminderNotifier.channelId(p))
@@ -529,7 +481,7 @@ private fun open(context: Context, intent: Intent) {
 
 // ---------------------------------------------------------------------- appearance
 
-/** Miniatures of every style in the current colors. */
+/** Miniatures of every style in the current colors: font, icons, buttons, tabs and entries. */
 @Composable
 private fun StylePicker(settings: Settings, onPick: (DesignStyle) -> Unit) {
     val colors = MaterialTheme.colorScheme
@@ -541,25 +493,27 @@ private fun StylePicker(settings: Settings, onPick: (DesignStyle) -> Unit) {
                 val selected = style == settings.style
                 val frame = RoundedCornerShape(16.dp)
                 Column(
-                    Modifier.width(116.dp).clip(frame).clickable { onPick(style) },
+                    Modifier.width(132.dp).clip(frame).clickable { onPick(style) },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
                         Modifier
-                            .width(116.dp)
-                            .height(146.dp)
+                            .width(132.dp)
+                            .height(196.dp)
                             .clip(frame)
-                            .border(if (selected) 2.5.dp else 1.dp, if (selected) colors.primary else colors.outlineVariant, frame)
+                            .border(if (selected) 3.dp else 1.dp, if (selected) colors.primary else colors.outlineVariant, frame)
                     ) {
                         TaskOrganizerTheme(settings.copy(style = style)) { StyleSample() }
                     }
                     Spacer(Modifier.height(6.dp))
-                    Text(
-                        styleName(style),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = if (selected) FontWeight.SemiBold else null,
-                        color = if (selected) colors.primary else colors.onSurface
-                    )
+                    TaskOrganizerTheme(settings.copy(style = style)) {
+                        Text(
+                            styleName(style),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = if (selected) FontWeight.Bold else null,
+                            color = if (selected) colors.primary else colors.onSurface
+                        )
+                    }
                 }
             }
         }
@@ -589,7 +543,7 @@ private fun PalettePicker(settings: Settings, onPick: (Palette) -> Unit) {
                         .clickable(onClickLabel = paletteName(palette)) { onPick(palette) },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (selected) Icon(Icons.Rounded.Check, paletteName(palette), tint = if (palette == Palette.WALLPAPER) Color.White else accent.onPrimary)
+                    if (selected) Icon(LocalDesign.current.icons.check, paletteName(palette), tint = if (palette == Palette.WALLPAPER) Color.White else accent.onPrimary)
                 }
             }
         }

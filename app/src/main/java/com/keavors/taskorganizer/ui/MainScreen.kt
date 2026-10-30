@@ -9,10 +9,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -24,6 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.keavors.taskorganizer.data.AppData
 import kotlinx.coroutines.launch
@@ -83,12 +86,16 @@ fun AppRoot(vm: MainViewModel) {
 @Composable
 private fun MainScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
     val tab = data.activeTab
-    Scaffold(
-        topBar = { TopBar(vm, data) },
-        bottomBar = { Composer(vm, tab) },
-        snackbarHost = { SnackbarHost(snackbar) },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
-        ItemList(vm, data, tab, padding)
+    val focus = LocalFocusManager.current
+    // A tap on empty space ends typing: the cursor and the keyboard go away.
+    ScreenBackground(Modifier.pointerInput(Unit) { detectTapGestures(onTap = { focus.clearFocus() }) }) {
+        Scaffold(
+            topBar = { TopBar(vm, data) },
+            bottomBar = { Composer(vm, tab) },
+            snackbarHost = { SnackbarHost(snackbar) },
+            containerColor = Color.Transparent
+        ) { padding ->
+            ItemList(vm, data, tab, padding)
+        }
     }
 }

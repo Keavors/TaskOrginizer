@@ -11,18 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DeleteForever
-import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.Restore
-import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.TrashedItem
 import com.keavors.taskorganizer.data.TrashedTab
+import com.keavors.taskorganizer.ui.theme.LocalDesign
 
 @Composable
 fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
@@ -42,7 +36,7 @@ fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
         "Корзина",
         onBack = { vm.screen = Screen.MAIN },
         snackbar = snackbar,
-        actions = { if (data.trash.isNotEmpty()) TextButton(onClick = { confirmEmpty = true }) { Text("Очистить") } }
+        actions = { if (data.trash.isNotEmpty()) AppButton("Очистить", onClick = { confirmEmpty = true }) }
     ) { padding ->
         LazyColumn(
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
@@ -61,7 +55,7 @@ fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
                 Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
                     Row(Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            if (entry is TrashedTab) Icons.Outlined.Folder else Icons.Outlined.StickyNote2,
+                            if (entry is TrashedTab) LocalDesign.current.icons.folder else LocalDesign.current.icons.book,
                             null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -78,8 +72,8 @@ fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        IconButton(onClick = { vm.restoreFromTrash(entry) }) { Icon(Icons.Outlined.Restore, "Восстановить") }
-                        IconButton(onClick = { vm.deleteFromTrash(entry) }) { Icon(Icons.Outlined.DeleteForever, "Удалить навсегда") }
+                        AppIconButton(LocalDesign.current.icons.restore, "Восстановить") { vm.restoreFromTrash(entry) }
+                        AppIconButton(LocalDesign.current.icons.deleteForever, "Удалить навсегда") { vm.deleteFromTrash(entry) }
                     }
                 }
             }

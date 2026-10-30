@@ -21,26 +21,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.StickyNote2
-import androidx.compose.material.icons.outlined.TaskAlt
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -60,6 +46,7 @@ import com.keavors.taskorganizer.data.TabColor
 import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.ui.theme.LocalDesign
 import com.keavors.taskorganizer.ui.theme.TabsLook
+import com.keavors.taskorganizer.ui.theme.TopBarLook
 import com.keavors.taskorganizer.ui.theme.tabColor
 
 private val COLOR_NAMES = mapOf(
@@ -73,37 +60,56 @@ fun openCount(tab: Tab, data: AppData): Int {
     return if (tab.kind == TabKind.TASKS) list.count { !it.done } else list.size
 }
 
-/** App title, search, menu and the row of tabs. */
+/** App title, search, menu and the row of tabs. Transparent: the design's background shows through. */
 @Composable
 fun TopBar(vm: MainViewModel, data: AppData) {
+    val d = LocalDesign.current
+    val c = MaterialTheme.colorScheme
     var menu by remember { mutableStateOf(false) }
-    Column(Modifier.background(MaterialTheme.colorScheme.background).statusBarsPadding()) {
-        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 4.dp, top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "Органайзер задач",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(onClick = { vm.screen = Screen.SEARCH }) { Icon(Icons.Outlined.Search, "Поиск") }
+    val terminal = d.topBar == TopBarLook.TERMINAL
+    Column(Modifier.statusBarsPadding()) {
+        Row(
+            Modifier.fillMaxWidth().padding(start = 20.dp, end = 4.dp, top = if (d.topBar == TopBarLook.COMPACT) 0.dp else 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AppTitle(Modifier.weight(1f))
+            if (terminal) {
+                TerminalAction("[поиск]") { vm.screen = Screen.SEARCH }
+            } else {
+                AppIconButton(d.icons.search, "Поиск", tint = c.onSurface) { vm.screen = Screen.SEARCH }
+            }
             Box {
-                IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, "Ещё") }
+                if (terminal) TerminalAction("[≡]") { menu = true }
+                else AppIconButton(d.icons.more, "Ещё", tint = c.onSurface) { menu = true }
                 DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                     DropdownMenuItem(
                         text = { Text(if (data.trash.isEmpty()) "Корзина" else "Корзина (${data.trash.size})") },
-                        leadingIcon = { Icon(Icons.Outlined.DeleteSweep, null) },
+                        leadingIcon = { Icon(d.icons.trash, null) },
                         onClick = { menu = false; vm.screen = Screen.TRASH }
                     )
                     DropdownMenuItem(
                         text = { Text("Настройки") },
-                        leadingIcon = { Icon(Icons.Outlined.Settings, null) },
+                        leadingIcon = { Icon(d.icons.settings, null) },
                         onClick = { menu = false; vm.screen = Screen.SETTINGS }
                     )
                 }
             }
         }
+        if (d.topBar == TopBarLook.STRICT) {
+            HorizontalDivider(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), thickness = 2.dp, color = c.onSurface)
+        }
         TabsRow(vm, data)
     }
+}
+
+@Composable
+private fun TerminalAction(text: String, onClick: () -> Unit) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.clickable(role = Role.Button, onClick = onClick).padding(horizontal = 8.dp, vertical = 12.dp)
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -120,15 +126,17 @@ private fun TabsRow(vm: MainViewModel, data: AppData) {
         }
     }
 
-    val gap = when (LocalDesign.current.tabs) {
+    val look = LocalDesign.current.tabs
+    val gap = when (look) {
         TabsLook.UNDERLINE, TabsLook.BRACKETS -> 4.dp
+        TabsLook.BOOKMARKS -> 2.dp
         else -> 8.dp
     }
     LazyRow(
         state = listState,
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = if (look == TabsLook.BOOKMARKS) 0.dp else 10.dp),
         horizontalArrangement = Arrangement.spacedBy(gap),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = if (look == TabsLook.BOOKMARKS) Alignment.Bottom else Alignment.CenterVertically
     ) {
         itemsIndexed(data.tabs, key = { _, tab -> tab.id }) { index, tab ->
             TabChip(vm, data, tab, index, Modifier.animateItem())
@@ -152,6 +160,7 @@ private fun TabChip(vm: MainViewModel, data: AppData, tab: Tab, index: Int, modi
     var menu by remember { mutableStateOf(false) }
     var rename by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
+    val icons = LocalDesign.current.icons
 
     Box(modifier) {
         TabLabel(
@@ -167,16 +176,16 @@ private fun TabChip(vm: MainViewModel, data: AppData, tab: Tab, index: Int, modi
         )
 
         DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-            DropdownMenuItem(text = { Text("Переименовать") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = {
+            DropdownMenuItem(text = { Text("Переименовать") }, leadingIcon = { Icon(icons.edit, null) }, onClick = {
                 menu = false
                 rename = true
             })
             HorizontalDivider()
-            KindItem("Задачи с галочками", Icons.Outlined.TaskAlt, tab.kind == TabKind.TASKS) {
+            KindItem("Задачи с галочками", icons.tasks, tab.kind == TabKind.TASKS) {
                 menu = false
                 vm.setTabKind(tab.id, TabKind.TASKS)
             }
-            KindItem("Заметки", Icons.Outlined.StickyNote2, tab.kind == TabKind.NOTES) {
+            KindItem("Заметки", icons.book, tab.kind == TabKind.NOTES) {
                 menu = false
                 vm.setTabKind(tab.id, TabKind.NOTES)
             }
@@ -189,20 +198,20 @@ private fun TabChip(vm: MainViewModel, data: AppData, tab: Tab, index: Int, modi
             if (index > 0) {
                 DropdownMenuItem(
                     text = { Text("Сдвинуть влево") },
-                    leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
+                    leadingIcon = { Icon(icons.left, null) },
                     onClick = { menu = false; vm.moveTab(index, index - 1) }
                 )
             }
             if (index < data.tabs.lastIndex) {
                 DropdownMenuItem(
                     text = { Text("Сдвинуть вправо") },
-                    leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
+                    leadingIcon = { Icon(icons.right, null) },
                     onClick = { menu = false; vm.moveTab(index, index + 1) }
                 )
             }
             DropdownMenuItem(
                 text = { Text(if (data.tabs.size > 1) "Удалить вкладку" else "Единственную вкладку удалить нельзя") },
-                leadingIcon = { Icon(Icons.Outlined.Delete, null) },
+                leadingIcon = { Icon(icons.delete, null) },
                 enabled = data.tabs.size > 1,
                 onClick = {
                     menu = false
@@ -234,7 +243,7 @@ private fun KindItem(label: String, icon: androidx.compose.ui.graphics.vector.Im
     DropdownMenuItem(
         text = { Text(label) },
         leadingIcon = { Icon(icon, null) },
-        trailingIcon = { if (checked) Icon(Icons.Rounded.Check, null, tint = MaterialTheme.colorScheme.primary) },
+        trailingIcon = { if (checked) Icon(LocalDesign.current.icons.check, null, tint = MaterialTheme.colorScheme.primary) },
         onClick = onClick
     )
 }

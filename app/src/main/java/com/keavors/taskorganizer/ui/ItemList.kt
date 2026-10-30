@@ -24,23 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Alarm
-import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Event
-import androidx.compose.material.icons.outlined.EventBusy
-import androidx.compose.material.icons.outlined.ExpandLess
-import androidx.compose.material.icons.outlined.ExpandMore
-import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.StickyNote2
-import androidx.compose.material.icons.outlined.SwapHoriz
-import androidx.compose.material.icons.outlined.Today
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.DragIndicator
-import androidx.compose.material.icons.rounded.GraphicEq
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -49,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +50,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -86,7 +71,9 @@ import com.keavors.taskorganizer.data.Priority
 import com.keavors.taskorganizer.data.Tab
 import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.ui.theme.HeaderSize
+import com.keavors.taskorganizer.ui.theme.ItemLook
 import com.keavors.taskorganizer.ui.theme.LocalDesign
+import com.keavors.taskorganizer.ui.theme.TopBarLook
 import com.keavors.taskorganizer.ui.theme.priorityColor
 import com.keavors.taskorganizer.ui.theme.tabColor
 import kotlinx.coroutines.delay
@@ -139,16 +126,15 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
         vm.highlightItemId = null
     }
 
+    // The list stays between the bars, so the bars can show the background of the design.
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = contentPadding.calculateTopPadding() + 4.dp,
-            bottom = contentPadding.calculateBottomPadding() + 24.dp
-        ),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(design.itemGap),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = contentPadding.calculateTopPadding(), bottom = contentPadding.calculateBottomPadding())
+            .notebookMargin(design.item == ItemLook.RULED)
     ) {
         item(key = "header") { TabHeader(tab, open.size, done.size) }
         if (items.isEmpty()) item(key = "empty") { EmptyState(tab) }
@@ -160,13 +146,16 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
         if (done.isNotEmpty()) {
             item(key = "done-header") {
                 Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { showDone = !showDone }) {
-                        Icon(if (showDone) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore, null)
+                    Row(
+                        Modifier.clip(MaterialTheme.shapes.small).clickable(role = Role.Button) { showDone = !showDone }.padding(horizontal = 8.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AppIcon(if (showDone) design.icons.expandLess else design.icons.expandMore, null, size = 20.dp, tint = MaterialTheme.colorScheme.primary)
                         Spacer(Modifier.width(6.dp))
-                        Text("Выполнено · ${done.size}")
+                        Text(labelText("Выполнено · ${done.size}"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                     }
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = { vm.clearCompleted(tab.id) }) { Text("Очистить") }
+                    AppButton("Очистить", onClick = { vm.clearCompleted(tab.id) })
                 }
             }
             if (showDone) {
@@ -180,14 +169,17 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
 
 @Composable
 private fun TabHeader(tab: Tab, open: Int, done: Int) {
-    val h = LocalDesign.current.header
+    val d = LocalDesign.current
+    val h = d.header
     val colors = MaterialTheme.colorScheme
     val base = when (h.size) {
         HeaderSize.TITLE -> MaterialTheme.typography.titleLarge
         HeaderSize.HEADLINE -> MaterialTheme.typography.headlineSmall
         HeaderSize.LARGE -> MaterialTheme.typography.headlineMedium
     }
-    Column(Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp)) {
+    // The notebook design writes the title right of the margin.
+    val start = if (d.item == ItemLook.RULED) 54.dp else 4.dp
+    Column(Modifier.padding(start = start, top = 4.dp, bottom = 10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             tab.color?.let {
                 Box(Modifier.size(12.dp).clip(CircleShape).background(tabColor(it)))
@@ -199,33 +191,38 @@ private fun TabHeader(tab: Tab, open: Int, done: Int) {
                 style = base.copy(
                     fontWeight = h.weight,
                     fontStyle = if (h.italic) FontStyle.Italic else FontStyle.Normal,
-                    letterSpacing = if (h.uppercase) 1.sp else base.letterSpacing
-                ),
+                    letterSpacing = if (h.uppercase) 1.5.sp else base.letterSpacing
+                ).glowing(),
                 color = if (h.accent) colors.primary else colors.onSurface
             )
         }
         val subtitle = if (tab.kind == TabKind.TASKS) {
             listOfNotNull(activeCount(open), if (done > 0) doneCount(done) else null).joinToString(" · ")
         } else notesCount(open)
-        Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+        Text(
+            if (d.topBar == TopBarLook.TERMINAL) "// $subtitle" else subtitle,
+            style = MaterialTheme.typography.bodyMedium,
+            color = colors.onSurfaceVariant
+        )
     }
 }
 
 @Composable
 private fun EmptyState(tab: Tab) {
+    val d = LocalDesign.current
     Column(
         Modifier.fillMaxWidth().padding(top = 56.dp, start = 24.dp, end = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            Modifier.size(72.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer),
+            Modifier.size(72.dp).clip(MaterialTheme.shapes.extraLarge).background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                if (tab.kind == TabKind.TASKS) Icons.Outlined.ListAlt else Icons.Outlined.StickyNote2,
+            AppIcon(
+                if (tab.kind == TabKind.TASKS) d.icons.tasks else d.icons.book,
                 null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(32.dp)
+                size = 32.dp
             )
         }
         Spacer(Modifier.height(16.dp))
@@ -254,6 +251,7 @@ private fun ItemRow(
     var datePicker by remember { mutableStateOf(false) }
     var timePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val focus = LocalFocusManager.current
     val colors = MaterialTheme.colorScheme
     val design = LocalDesign.current
     val swipe = rememberSwipeToDismissBoxState()
@@ -275,16 +273,22 @@ private fun ItemRow(
         backgroundContent = { SwipeBackground(swipe.dismissDirection, item.done) }
     ) {
         ItemFrame(item.priority, highlighted, dragging) {
-            // The whole entry reacts: tap = edit, hold = menu.
+            // Tap anywhere on the entry = its menu, hold = edit the text. Either ends typing elsewhere.
             Row(
                 Modifier
                     .fillMaxWidth()
                     .combinedClickable(
                         enabled = !editing,
-                        onClickLabel = "Изменить",
-                        onLongClickLabel = "Меню",
-                        onClick = { editing = true },
-                        onLongClick = { menu = true }
+                        onClickLabel = "Меню",
+                        onLongClickLabel = "Изменить текст",
+                        onClick = {
+                            focus.clearFocus()
+                            menu = true
+                        },
+                        onLongClick = {
+                            focus.clearFocus()
+                            editing = true
+                        }
                     )
                     .padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -298,8 +302,9 @@ private fun ItemRow(
                         contentAlignment = Alignment.Center
                     ) { CheckMark(item.done) }
                 } else {
-                    Spacer(Modifier.width(14.dp))
+                    Spacer(Modifier.width(if (design.item == ItemLook.RULED) 50.dp else 14.dp))
                 }
+                if (design.item == ItemLook.RULED && isTask) Spacer(Modifier.width(2.dp))
                 Column(Modifier.weight(1f).padding(vertical = design.itemPadding)) {
                     if (editing) {
                         ItemEditor(item, multiLine = !isTask, onDone = { text ->
@@ -316,16 +321,16 @@ private fun ItemRow(
                     }
                     if (!editing && (item.dueDate != null || item.source == ItemSource.VOICE)) {
                         Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                            item.dueDate?.let { DueChip(it, item.dueTime, item.done) { dueMenu = true } }
+                            item.dueDate?.let { DueBadge(it, item.dueTime, item.done) { dueMenu = true } }
                             if (item.source == ItemSource.VOICE) {
                                 if (item.dueDate != null) Spacer(Modifier.width(8.dp))
-                                Icon(Icons.Rounded.GraphicEq, "Надиктовано", Modifier.size(14.dp), tint = colors.onSurfaceVariant.copy(alpha = 0.7f))
+                                Icon(design.icons.voice, "Надиктовано", Modifier.size(14.dp), tint = colors.onSurfaceVariant.copy(alpha = 0.7f))
                             }
                         }
                     }
                 }
                 Box {
-                    PriorityFlag(item.priority) { vm.setPriority(tab.id, item.id, item.priority.next()) }
+                    PriorityMark(item.priority) { vm.setPriority(tab.id, item.id, item.priority.next()) }
                     DueMenu(
                         expanded = dueMenu,
                         date = item.dueDate,
@@ -350,7 +355,7 @@ private fun ItemRow(
                 }
                 if (dragHandle != null) {
                     Icon(
-                        Icons.Rounded.DragIndicator,
+                        design.icons.drag,
                         "Перетащить",
                         tint = colors.onSurfaceVariant.copy(alpha = 0.45f),
                         modifier = dragHandle.padding(start = 0.dp, end = 10.dp).size(22.dp)
@@ -385,21 +390,24 @@ private fun ItemRow(
 @Composable
 private fun SwipeBackground(direction: SwipeToDismissBoxValue, done: Boolean) {
     val colors = MaterialTheme.colorScheme
+    val icons = LocalDesign.current.icons
     val (color, icon, alignment) = when (direction) {
-        SwipeToDismissBoxValue.EndToStart -> Triple(colors.errorContainer, Icons.Outlined.Delete, Alignment.CenterEnd)
-        SwipeToDismissBoxValue.StartToEnd -> Triple(colors.primaryContainer, if (done) Icons.Outlined.EventBusy else Icons.Rounded.Check, Alignment.CenterStart)
+        SwipeToDismissBoxValue.EndToStart -> Triple(colors.errorContainer, icons.delete, Alignment.CenterEnd)
+        SwipeToDismissBoxValue.StartToEnd -> Triple(colors.primaryContainer, if (done) icons.noDate else icons.check, Alignment.CenterStart)
         SwipeToDismissBoxValue.Settled -> Triple(Color.Transparent, null, Alignment.Center)
     }
     Box(
         Modifier.fillMaxSize().clip(LocalDesign.current.itemShape).background(color).padding(horizontal = 20.dp),
         contentAlignment = alignment
     ) {
-        if (icon != null) Icon(icon, null, tint = if (direction == SwipeToDismissBoxValue.EndToStart) colors.onErrorContainer else colors.onPrimaryContainer)
+        if (icon != null) AppIcon(icon, null, tint = if (direction == SwipeToDismissBoxValue.EndToStart) colors.onErrorContainer else colors.onPrimaryContainer)
     }
 }
 
+/** Due date (and time) under the text; tap = change it. */
 @Composable
-private fun DueChip(date: String, time: String?, done: Boolean, onClick: () -> Unit) {
+private fun DueBadge(date: String, time: String?, done: Boolean, onClick: () -> Unit) {
+    val d = LocalDesign.current
     val (text, tone) = Due.label(date, time)
     val colors = MaterialTheme.colorScheme
     val (bg, fg) = when {
@@ -408,13 +416,25 @@ private fun DueChip(date: String, time: String?, done: Boolean, onClick: () -> U
         tone == DueTone.TODAY -> colors.primaryContainer to colors.onPrimaryContainer
         else -> colors.surfaceContainerHigh to colors.onSurfaceVariant
     }
-    Row(
-        Modifier.clip(MaterialTheme.shapes.extraSmall).background(bg).clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 3.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(if (time != null) Icons.Outlined.Alarm else Icons.Outlined.CalendarMonth, null, Modifier.size(13.dp), tint = fg)
-        Spacer(Modifier.width(4.dp))
-        Text(text, style = MaterialTheme.typography.labelMedium, color = fg)
+    when (d.topBar) {
+        TopBarLook.TERMINAL, TopBarLook.PAPER -> {
+            // Plain text: "@ сегодня, 14:00" in the terminal, a handwritten note in the notebook.
+            val ink = if (tone == DueTone.OVERDUE && !done) colors.error else if (tone == DueTone.TODAY && !done) colors.primary else colors.onSurfaceVariant
+            Text(
+                if (d.topBar == TopBarLook.TERMINAL) "@ $text" else "до: $text",
+                style = MaterialTheme.typography.labelLarge,
+                color = ink,
+                modifier = Modifier.clip(MaterialTheme.shapes.extraSmall).clickable(onClick = onClick).padding(vertical = 2.dp)
+            )
+        }
+        else -> Row(
+            Modifier.clip(d.chipShape).background(bg).clickable(onClick = onClick).padding(horizontal = 8.dp, vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(if (time != null) d.icons.alarm else d.icons.calendar, null, Modifier.size(13.dp), tint = fg)
+            Spacer(Modifier.width(4.dp))
+            Text(text, style = MaterialTheme.typography.labelMedium, color = fg)
+        }
     }
 }
 
@@ -452,6 +472,15 @@ private fun ItemEditor(item: Item, multiLine: Boolean, onDone: (String) -> Unit)
 }
 
 @Composable
+private fun MenuItem(text: String, icon: ImageVector, color: Color = Color.Unspecified, onClick: () -> Unit) {
+    DropdownMenuItem(
+        text = { Text(text, color = if (color == Color.Unspecified) MaterialTheme.colorScheme.onSurface else color) },
+        leadingIcon = { Icon(icon, null, tint = if (color == Color.Unspecified) MaterialTheme.colorScheme.onSurfaceVariant else color) },
+        onClick = onClick
+    )
+}
+
+@Composable
 private fun DueMenu(
     expanded: Boolean,
     date: String?,
@@ -463,36 +492,17 @@ private fun DueMenu(
     onClearTime: () -> Unit,
     onClear: () -> Unit
 ) {
+    val icons = LocalDesign.current.icons
     val today = LocalDate.now()
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
-        DropdownMenuItem(text = { Text("Сегодня") }, leadingIcon = { Icon(Icons.Outlined.Today, null) }, onClick = {
-            onDismiss(); onPickDate(today.toString())
-        })
-        DropdownMenuItem(text = { Text("Завтра") }, leadingIcon = { Icon(Icons.Outlined.Event, null) }, onClick = {
-            onDismiss(); onPickDate(today.plusDays(1).toString())
-        })
-        DropdownMenuItem(text = { Text("Через неделю") }, leadingIcon = { Icon(Icons.Outlined.Event, null) }, onClick = {
-            onDismiss(); onPickDate(today.plusWeeks(1).toString())
-        })
-        DropdownMenuItem(text = { Text("Выбрать дату…") }, leadingIcon = { Icon(Icons.Outlined.CalendarMonth, null) }, onClick = {
-            onDismiss(); onCustomDate()
-        })
+        MenuItem("Сегодня", icons.today) { onDismiss(); onPickDate(today.toString()) }
+        MenuItem("Завтра", icons.event) { onDismiss(); onPickDate(today.plusDays(1).toString()) }
+        MenuItem("Через неделю", icons.event) { onDismiss(); onPickDate(today.plusWeeks(1).toString()) }
+        MenuItem("Выбрать дату…", icons.calendar) { onDismiss(); onCustomDate() }
         HorizontalDivider()
-        DropdownMenuItem(
-            text = { Text(if (time == null) "Время…" else "Время: ${Due.time(time)}") },
-            leadingIcon = { Icon(Icons.Outlined.Schedule, null) },
-            onClick = { onDismiss(); onPickTime() }
-        )
-        if (time != null) {
-            DropdownMenuItem(text = { Text("Убрать время") }, leadingIcon = { Icon(Icons.Outlined.Alarm, null) }, onClick = {
-                onDismiss(); onClearTime()
-            })
-        }
-        if (date != null) {
-            DropdownMenuItem(text = { Text("Убрать срок") }, leadingIcon = { Icon(Icons.Outlined.EventBusy, null) }, onClick = {
-                onDismiss(); onClear()
-            })
-        }
+        MenuItem(if (time == null) "Время…" else "Время: ${Due.time(time)}", icons.time) { onDismiss(); onPickTime() }
+        if (time != null) MenuItem("Убрать время", icons.alarm) { onDismiss(); onClearTime() }
+        if (date != null) MenuItem("Убрать срок", icons.noDate) { onDismiss(); onClear() }
     }
 }
 
@@ -507,6 +517,7 @@ private fun ItemMenu(
     onEdit: () -> Unit,
     onDue: () -> Unit
 ) {
+    val icons = LocalDesign.current.icons
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
         Row(
             Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -527,17 +538,13 @@ private fun ItemMenu(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    if (selected) Icon(Icons.Rounded.Check, null, tint = Color.White, modifier = Modifier.size(18.dp))
+                    if (selected) Icon(icons.check, null, tint = Color.White, modifier = Modifier.size(18.dp))
                 }
             }
         }
         HorizontalDivider()
-        DropdownMenuItem(text = { Text("Изменить") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = {
-            onDismiss(); onEdit()
-        })
-        DropdownMenuItem(text = { Text("Срок") }, leadingIcon = { Icon(Icons.Outlined.CalendarMonth, null) }, onClick = {
-            onDismiss(); onDue()
-        })
+        MenuItem("Изменить", icons.edit) { onDismiss(); onEdit() }
+        MenuItem("Срок", icons.calendar) { onDismiss(); onDue() }
         val others = data.tabs.filter { it.id != tab.id }
         if (others.isNotEmpty()) {
             HorizontalDivider()
@@ -548,16 +555,10 @@ private fun ItemMenu(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
             )
             others.forEach { target ->
-                DropdownMenuItem(text = { Text(target.title) }, leadingIcon = { Icon(Icons.Outlined.SwapHoriz, null) }, onClick = {
-                    onDismiss(); vm.moveItemToTab(tab.id, item.id, target.id)
-                })
+                MenuItem(target.title, icons.move) { onDismiss(); vm.moveItemToTab(tab.id, item.id, target.id) }
             }
         }
         HorizontalDivider()
-        DropdownMenuItem(
-            text = { Text("Удалить", color = MaterialTheme.colorScheme.error) },
-            leadingIcon = { Icon(Icons.Outlined.Delete, null, tint = MaterialTheme.colorScheme.error) },
-            onClick = { onDismiss(); vm.deleteItems(tab.id, listOf(item.id)) }
-        )
+        MenuItem("Удалить", icons.delete, MaterialTheme.colorScheme.error) { onDismiss(); vm.deleteItems(tab.id, listOf(item.id)) }
     }
 }

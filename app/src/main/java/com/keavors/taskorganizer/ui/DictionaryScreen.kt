@@ -17,15 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -44,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.keavors.taskorganizer.data.AppData
 import com.keavors.taskorganizer.data.DictionaryTerm
+import com.keavors.taskorganizer.ui.theme.LocalDesign
 
 /**
  * Words dictation should write correctly. The words are passed to the recognizer
@@ -86,7 +80,7 @@ fun DictionaryScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostSta
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(8.dp))
-                    FilledTonalIconButton(onClick = add, enabled = newWord.isNotBlank()) { Icon(Icons.Outlined.Add, "Добавить") }
+                    AppIconButton(LocalDesign.current.icons.add, "Добавить", tint = MaterialTheme.colorScheme.primary, onClick = add)
                 }
             }
             if (data.dictionary.isEmpty()) {
@@ -112,8 +106,8 @@ private fun TermCard(vm: MainViewModel, term: DictionaryTerm) {
         Column(Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(term.text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
-                IconButton(onClick = { editWord = true }) { Icon(Icons.Outlined.Edit, "Изменить") }
-                IconButton(onClick = { vm.deleteTerm(term.id) }) { Icon(Icons.Outlined.Delete, "Удалить") }
+                AppIconButton(LocalDesign.current.icons.edit, "Изменить") { editWord = true }
+                AppIconButton(LocalDesign.current.icons.delete, "Удалить") { vm.deleteTerm(term.id) }
             }
             Text("Варианты распознавания", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(6.dp))
@@ -123,13 +117,15 @@ private fun TermCard(vm: MainViewModel, term: DictionaryTerm) {
                         selected = false,
                         onClick = { vm.updateTerm(term.id, variants = term.variants - v) },
                         label = { Text(v) },
-                        trailingIcon = { Icon(Icons.Outlined.Close, "Убрать", Modifier.size(16.dp)) }
+                        trailingIcon = { Icon(LocalDesign.current.icons.close, "Убрать", Modifier.size(16.dp)) },
+                        shape = LocalDesign.current.chipShape
                     )
                 }
                 AssistChip(
                     onClick = { addVariant = true },
                     label = { Text("Вариант") },
-                    leadingIcon = { Icon(Icons.Outlined.Add, null, Modifier.size(16.dp)) }
+                    leadingIcon = { Icon(LocalDesign.current.icons.add, null, Modifier.size(16.dp)) },
+                    shape = LocalDesign.current.chipShape
                 )
             }
         }

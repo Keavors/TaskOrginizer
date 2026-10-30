@@ -3,6 +3,7 @@ package com.keavors.taskorganizer.ui.theme
 import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -21,8 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
+import androidx.compose.ui.unit.sp
 import com.keavors.taskorganizer.data.DesignStyle
 import com.keavors.taskorganizer.data.Palette
 import com.keavors.taskorganizer.data.Priority
@@ -188,44 +191,57 @@ private fun colorScheme(context: Context, style: DesignStyle, palette: Palette, 
     return scheme(dark, a, if (black) Black else neutrals(style, dark, a))
 }
 
-private fun TextStyle.adapt(family: FontFamily, scale: Float, weight: FontWeight? = null): TextStyle = copy(
-    fontFamily = family,
+private fun TextStyle.adapt(family: FontFamily?, scale: Float, weight: FontWeight?, spacing: TextUnit? = null): TextStyle = copy(
+    fontFamily = family ?: fontFamily,
     fontSize = if (fontSize.isSpecified) fontSize * scale else fontSize,
     lineHeight = if (lineHeight.isSpecified) lineHeight * scale else lineHeight,
-    fontWeight = weight ?: fontWeight
+    fontWeight = weight ?: fontWeight,
+    letterSpacing = spacing ?: letterSpacing
 )
 
+/** Fonts of a style: headlines, titles, body text and labels (buttons, tabs, chips). */
+private class TypeSpec(
+    val head: FontFamily?, val headWeight: FontWeight?,
+    val title: FontFamily?, val titleWeight: FontWeight?,
+    val body: FontFamily?, val bodyWeight: FontWeight?,
+    val label: FontFamily?, val labelWeight: FontWeight?,
+    val scale: Float = 1f,
+    val labelSpacing: TextUnit? = null
+)
+
+private fun typeSpec(style: DesignStyle): TypeSpec = when (style) {
+    DesignStyle.STANDARD -> TypeSpec(null, null, null, null, null, null, null, null)
+    DesignStyle.MINIMAL -> AppFonts.Manrope.let { TypeSpec(it, FontWeight.ExtraLight, it, FontWeight.Medium, it, FontWeight.Normal, it, FontWeight.Medium, labelSpacing = 0.4.sp) }
+    DesignStyle.SOFT -> AppFonts.Nunito.let { TypeSpec(it, FontWeight.Black, it, FontWeight.ExtraBold, it, FontWeight.SemiBold, it, FontWeight.ExtraBold, scale = 1.06f) }
+    DesignStyle.SHARP -> TypeSpec(
+        AppFonts.Oswald, FontWeight.SemiBold, AppFonts.Oswald, FontWeight.Medium,
+        AppFonts.RobotoCondensed, FontWeight.Normal, AppFonts.Oswald, FontWeight.Medium, labelSpacing = 1.2.sp
+    )
+    DesignStyle.TERMINAL -> AppFonts.JetBrainsMono.let { TypeSpec(it, FontWeight.Bold, it, FontWeight.SemiBold, it, FontWeight.Normal, it, FontWeight.Medium, scale = 0.94f) }
+    DesignStyle.PAPER -> AppFonts.Caveat.let { TypeSpec(it, FontWeight.Bold, it, FontWeight.Bold, it, FontWeight.Medium, it, FontWeight.SemiBold, scale = 1.3f) }
+    DesignStyle.COMPACT -> AppFonts.RobotoCondensed.let { TypeSpec(it, FontWeight.SemiBold, it, FontWeight.Medium, it, FontWeight.Normal, it, FontWeight.Medium, scale = 0.9f) }
+    DesignStyle.NEON -> AppFonts.Exo2.let { TypeSpec(it, FontWeight.Black, it, FontWeight.Bold, it, FontWeight.Normal, it, FontWeight.SemiBold, labelSpacing = 1.sp) }
+}
+
 private fun typography(style: DesignStyle): Typography {
-    val base = Typography()
-    val family = when (style) {
-        DesignStyle.TERMINAL -> FontFamily.Monospace
-        DesignStyle.PAPER -> FontFamily.Serif
-        DesignStyle.MINIMAL, DesignStyle.SHARP -> FontFamily.SansSerif
-        else -> FontFamily.Default
-    }
-    val scale = if (style == DesignStyle.COMPACT) 0.92f else 1f
-    val heading = when (style) {
-        DesignStyle.MINIMAL -> FontWeight.Light
-        DesignStyle.SOFT, DesignStyle.SHARP -> FontWeight.Bold
-        DesignStyle.NEON -> FontWeight.ExtraBold
-        else -> null
-    }
-    return base.copy(
-        displayLarge = base.displayLarge.adapt(family, scale, heading),
-        displayMedium = base.displayMedium.adapt(family, scale, heading),
-        displaySmall = base.displaySmall.adapt(family, scale, heading),
-        headlineLarge = base.headlineLarge.adapt(family, scale, heading),
-        headlineMedium = base.headlineMedium.adapt(family, scale, heading),
-        headlineSmall = base.headlineSmall.adapt(family, scale, heading),
-        titleLarge = base.titleLarge.adapt(family, scale),
-        titleMedium = base.titleMedium.adapt(family, scale),
-        titleSmall = base.titleSmall.adapt(family, scale),
-        bodyLarge = base.bodyLarge.adapt(family, scale),
-        bodyMedium = base.bodyMedium.adapt(family, scale),
-        bodySmall = base.bodySmall.adapt(family, scale),
-        labelLarge = base.labelLarge.adapt(family, scale),
-        labelMedium = base.labelMedium.adapt(family, scale),
-        labelSmall = base.labelSmall.adapt(family, scale)
+    val b = Typography()
+    val t = typeSpec(style)
+    return b.copy(
+        displayLarge = b.displayLarge.adapt(t.head, t.scale, t.headWeight),
+        displayMedium = b.displayMedium.adapt(t.head, t.scale, t.headWeight),
+        displaySmall = b.displaySmall.adapt(t.head, t.scale, t.headWeight),
+        headlineLarge = b.headlineLarge.adapt(t.head, t.scale, t.headWeight),
+        headlineMedium = b.headlineMedium.adapt(t.head, t.scale, t.headWeight),
+        headlineSmall = b.headlineSmall.adapt(t.head, t.scale, t.headWeight),
+        titleLarge = b.titleLarge.adapt(t.title, t.scale, t.titleWeight),
+        titleMedium = b.titleMedium.adapt(t.title, t.scale, t.titleWeight),
+        titleSmall = b.titleSmall.adapt(t.title, t.scale, t.titleWeight),
+        bodyLarge = b.bodyLarge.adapt(t.body, t.scale, t.bodyWeight),
+        bodyMedium = b.bodyMedium.adapt(t.body, t.scale, t.bodyWeight),
+        bodySmall = b.bodySmall.adapt(t.body, t.scale, t.bodyWeight),
+        labelLarge = b.labelLarge.adapt(t.label, t.scale, t.labelWeight, t.labelSpacing),
+        labelMedium = b.labelMedium.adapt(t.label, t.scale, t.labelWeight, t.labelSpacing),
+        labelSmall = b.labelSmall.adapt(t.label, t.scale, t.labelWeight, t.labelSpacing)
     )
 }
 
@@ -237,22 +253,29 @@ private fun corners(xs: Int, s: Int, m: Int, l: Int, xl: Int) = Shapes(
     extraLarge = RoundedCornerShape(xl.dp)
 )
 
+private fun cuts(xs: Int, s: Int, m: Int, l: Int, xl: Int) = Shapes(
+    extraSmall = CutCornerShape(xs.dp),
+    small = CutCornerShape(s.dp),
+    medium = CutCornerShape(m.dp),
+    large = CutCornerShape(l.dp),
+    extraLarge = CutCornerShape(xl.dp)
+)
+
 private fun shapes(style: DesignStyle): Shapes = when (style) {
     DesignStyle.STANDARD -> corners(8, 12, 16, 24, 32)
-    DesignStyle.MINIMAL -> corners(4, 6, 8, 12, 16)
-    DesignStyle.SOFT -> corners(12, 18, 24, 28, 36)
-    DesignStyle.SHARP -> corners(0, 2, 2, 4, 4)
-    DesignStyle.TERMINAL -> corners(0, 0, 0, 0, 0)
-    DesignStyle.PAPER -> corners(2, 4, 6, 8, 12)
-    DesignStyle.COMPACT -> corners(6, 8, 10, 16, 24)
-    DesignStyle.NEON -> corners(8, 12, 14, 20, 28)
+    DesignStyle.MINIMAL -> corners(2, 4, 4, 6, 8)
+    DesignStyle.SOFT -> corners(16, 20, 28, 32, 40)
+    DesignStyle.SHARP, DesignStyle.TERMINAL -> corners(0, 0, 0, 0, 0)
+    DesignStyle.PAPER -> corners(2, 3, 4, 6, 8)
+    DesignStyle.COMPACT -> corners(4, 6, 8, 10, 14)
+    DesignStyle.NEON -> cuts(6, 8, 10, 14, 18)
 }
 
-/** Gray, yellow, red. */
+/** Gray, yellow, red. The red is meant to alarm. */
 fun priorityColor(priority: Priority): Color = when (priority) {
     Priority.NORMAL -> Color(0xFF9CA3AF)
-    Priority.MEDIUM -> Color(0xFFEAB308)
-    Priority.HIGH -> Color(0xFFEF4444)
+    Priority.MEDIUM -> Color(0xFFF5C400)
+    Priority.HIGH -> Color(0xFFFF0A1E)
 }
 
 fun tabColor(color: TabColor): Color = when (color) {

@@ -18,6 +18,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -28,31 +30,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowForward
-import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.rounded.ArrowUpward
-import androidx.compose.material.icons.rounded.Mic
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,7 +56,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -76,6 +65,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -89,6 +79,7 @@ import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.speech.DictationPhase
 import com.keavors.taskorganizer.text.Entries
 import com.keavors.taskorganizer.ui.theme.LocalDesign
+import com.keavors.taskorganizer.ui.theme.MicLook
 import kotlinx.coroutines.delay
 
 /** Inserts dictated text at the cursor; returns the new field value and the inserted piece. */
@@ -148,10 +139,10 @@ fun Composer(vm: MainViewModel, tab: Tab) {
         }
     }
 
+    // No background of its own: the design's background shows through.
     Column(
         Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
             .navigationBarsPadding()
             .imePadding()
             .padding(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 10.dp)
@@ -162,44 +153,37 @@ fun Composer(vm: MainViewModel, tab: Tab) {
         }
         Row(verticalAlignment = Alignment.Bottom) {
             FieldFrame(Modifier.weight(1f)) {
-                    BasicTextField(
-                        value = field,
-                        onValueChange = {
-                            field = it
-                            if (it.text.isBlank()) dictated = null
-                        },
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            imeAction = if (tab.kind == TabKind.TASKS) ImeAction.Done else ImeAction.Default
-                        ),
-                        keyboardActions = KeyboardActions(onDone = { submit(field.text) }),
-                        maxLines = 6,
-                        modifier = Modifier.weight(1f).padding(start = fieldTextStart(), end = 8.dp, top = 14.dp, bottom = 14.dp),
-                        decorationBox = { inner ->
-                            Box {
-                                if (field.text.isEmpty()) {
-                                    Text(
-                                        if (tab.kind == TabKind.TASKS) "Новая задача" else "Новая заметка",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                                inner()
+                BasicTextField(
+                    value = field,
+                    onValueChange = {
+                        field = it
+                        if (it.text.isBlank()) dictated = null
+                    },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        imeAction = if (tab.kind == TabKind.TASKS) ImeAction.Done else ImeAction.Default
+                    ),
+                    keyboardActions = KeyboardActions(onDone = { submit(field.text) }),
+                    maxLines = 6,
+                    modifier = Modifier.weight(1f).padding(start = fieldTextStart(), end = 8.dp, top = 14.dp, bottom = 14.dp),
+                    decorationBox = { inner ->
+                        Box {
+                            if (field.text.isEmpty()) {
+                                Text(
+                                    if (tab.kind == TabKind.TASKS) "Новая задача" else "Новая заметка",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
-                        }
-                    )
-                    AnimatedVisibility(field.text.isNotBlank(), enter = fadeIn(), exit = fadeOut()) {
-                        IconButton(onClick = { submit(field.text) }) {
-                            Box(
-                                Modifier.size(36.dp).clip(LocalDesign.current.micShape).background(MaterialTheme.colorScheme.primary),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Rounded.ArrowUpward, "Добавить", tint = MaterialTheme.colorScheme.onPrimary)
-                            }
+                            inner()
                         }
                     }
+                )
+                AnimatedVisibility(field.text.isNotBlank(), enter = fadeIn(), exit = fadeOut()) {
+                    SendButton { submit(field.text) }
+                }
             }
             Spacer(Modifier.width(10.dp))
             MicButton(phase, dictation.level.collectAsStateWithLifecycle().value, onPress = pressMic, onRelease = { dictation.release() })
@@ -207,57 +191,70 @@ fun Composer(vm: MainViewModel, tab: Tab) {
     }
 }
 
+/** "Add" inside the input field. */
+@Composable
+private fun SendButton(onClick: () -> Unit) {
+    val d = LocalDesign.current
+    val c = MaterialTheme.colorScheme
+    if (d.mic == MicLook.REC) {
+        Text(
+            "[↵]",
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+            color = c.primary,
+            modifier = Modifier.clickable(role = Role.Button, onClickLabel = "Добавить", onClick = onClick).padding(10.dp)
+        )
+        return
+    }
+    val shape = d.micShape
+    val face = when (d.mic) {
+        MicLook.OUTLINED, MicLook.STAMP -> Modifier.border(1.5.dp, c.primary, shape)
+        MicLook.GLOW -> Modifier.background(c.primary.copy(alpha = 0.2f)).border(1.dp, c.primary, shape)
+        else -> Modifier.background(c.primary)
+    }
+    val tint = when (d.mic) {
+        MicLook.OUTLINED, MicLook.STAMP, MicLook.GLOW -> c.primary
+        else -> c.onPrimary
+    }
+    Box(
+        Modifier.padding(6.dp).size(36.dp).clip(shape).then(face).clickable(role = Role.Button, onClickLabel = "Добавить", onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) { AppIcon(d.icons.send, "Добавить", tint = tint, size = 20.dp) }
+}
+
 @Composable
 private fun MicButton(phase: DictationPhase, level: Float, onPress: () -> Boolean, onRelease: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     val design = LocalDesign.current
-    val shape = design.micShape
-    val size = design.micSize
     val listening = phase is DictationPhase.Listening
     val busy = phase == DictationPhase.Finishing
     val ring by animateFloatAsState(if (listening) 1f + level * 0.55f else 1f, label = "ring")
-    val container = if (listening) colors.error else colors.primary
-    val content = if (listening) colors.onError else colors.onPrimary
 
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(size)) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(design.micSize)) {
         if (listening) {
             Box(
                 Modifier
-                    .size(size)
+                    .size(design.micSize)
                     .graphicsLayer {
                         scaleX = ring
                         scaleY = ring
                     }
-                    .clip(shape)
-                    .background(container.copy(alpha = 0.22f))
+                    .clip(design.micShape)
+                    .background(colors.error.copy(alpha = 0.22f))
             )
         }
-        Surface(
-            shape = shape,
-            color = container,
-            contentColor = content,
-            shadowElevation = 3.dp,
-            modifier = Modifier
-                .then(if (design.glow) Modifier.shadow(12.dp, shape, ambientColor = container, spotColor = container) else Modifier)
-                .size(size)
-                .pointerInput(busy) {
-                    if (busy) return@pointerInput
-                    awaitEachGesture {
-                        awaitFirstDown()
-                        val started = onPress()
-                        waitForUpOrCancellation()
-                        if (started) onRelease()
-                    }
-                }
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                when {
-                    busy -> CircularProgressIndicator(Modifier.size(24.dp), color = content, strokeWidth = 2.5.dp)
-                    listening -> Icon(Icons.Rounded.Stop, "Остановить", Modifier.size(26.dp))
-                    else -> Icon(Icons.Rounded.Mic, "Надиктовать: нажмите или удерживайте", Modifier.size(26.dp))
+        MicFace(
+            listening = listening,
+            busy = busy,
+            modifier = Modifier.pointerInput(busy) {
+                if (busy) return@pointerInput
+                awaitEachGesture {
+                    awaitFirstDown()
+                    val started = onPress()
+                    waitForUpOrCancellation()
+                    if (started) onRelease()
                 }
             }
-        }
+        )
     }
 }
 
@@ -267,10 +264,8 @@ private fun VoiceBar(vm: MainViewModel, phase: DictationPhase) {
     val colors = MaterialTheme.colorScheme
     val dictation = vm.services.dictation
     val partial by dictation.partial.collectAsStateWithLifecycle()
-    Surface(
-        shape = MaterialTheme.shapes.large,
-        color = colors.surfaceContainerHigh,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+    Box(
+        Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(MaterialTheme.shapes.large).background(colors.surfaceContainerHigh)
     ) {
         Column(Modifier.padding(start = 16.dp, end = 6.dp, top = 6.dp, bottom = 6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -279,7 +274,7 @@ private fun VoiceBar(vm: MainViewModel, phase: DictationPhase) {
                     val alpha by pulse.animateFloat(1f, 0.25f, infiniteRepeatable(tween(700), RepeatMode.Reverse), label = "dot")
                     Box(Modifier.size(10.dp).graphicsLayer { this.alpha = alpha }.clip(CircleShape).background(colors.error))
                     Spacer(Modifier.width(10.dp))
-                    Text("Говорите", style = MaterialTheme.typography.labelLarge)
+                    Text(labelText("Говорите"), style = MaterialTheme.typography.labelLarge)
                     Spacer(Modifier.width(8.dp))
                     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
                     LaunchedEffect(Unit) {
@@ -298,9 +293,9 @@ private fun VoiceBar(vm: MainViewModel, phase: DictationPhase) {
                 } else {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(Modifier.width(12.dp))
-                    Text("Распознаю…", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f).padding(vertical = 12.dp))
+                    Text(labelText("Распознаю…"), style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f).padding(vertical = 12.dp))
                 }
-                TextButton(onClick = { dictation.cancel() }) { Text("Отмена") }
+                AppButton("Отмена", onClick = { dictation.cancel() })
             }
             if (partial.isNotBlank()) {
                 // The newest words matter most: long text is cut from the start.
@@ -343,34 +338,33 @@ private fun LevelBars(vm: MainViewModel, modifier: Modifier) {
 @Composable
 private fun LearnCard(vm: MainViewModel) {
     val learn = vm.learn
+    val icons = LocalDesign.current.icons
     AnimatedVisibility(learn.isNotEmpty(), enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
-        Surface(
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        Box(
+            Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(MaterialTheme.shapes.large).background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
             Column(Modifier.padding(start = 16.dp, end = 4.dp, top = 6.dp, bottom = 8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Outlined.AutoAwesome, null, Modifier.size(18.dp))
+                    Icon(icons.learn, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
                         "Запомнить исправления для голосового ввода?",
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.weight(1f)
                     )
-                    IconButton(onClick = { vm.learn = emptyList() }) { Icon(Icons.Outlined.Close, "Не нужно") }
+                    AppIconButton(icons.close, "Не нужно", onClick = { vm.learn = emptyList() })
                 }
                 learn.forEach { s ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(s.from, style = MaterialTheme.typography.bodyMedium)
-                        Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, Modifier.padding(horizontal = 6.dp).size(16.dp))
+                        Icon(icons.forward, null, Modifier.padding(horizontal = 6.dp).size(16.dp))
                         Text(s.to, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
-                        TextButton(onClick = { vm.rememberCorrections(listOf(s)) }) { Text("Запомнить") }
+                        AppButton("Запомнить", onClick = { vm.rememberCorrections(listOf(s)) })
                     }
                 }
                 if (learn.size > 1) {
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                        TextButton(onClick = { vm.rememberCorrections(learn) }) { Text("Запомнить все") }
+                        AppButton("Запомнить все", onClick = { vm.rememberCorrections(learn) }, kind = ButtonKind.PRIMARY)
                     }
                 }
             }

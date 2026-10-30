@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -14,12 +15,8 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -74,12 +71,11 @@ fun TextInputDialog(
                 modifier = Modifier.fillMaxWidth().focusRequester(focus)
             )
         },
-        confirmButton = { TextButton(onClick = confirm, enabled = value.text.isNotBlank()) { Text(confirmLabel) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }
+        confirmButton = { AppButton(confirmLabel, onClick = confirm, kind = ButtonKind.PRIMARY, enabled = value.text.isNotBlank()) },
+        dismissButton = { AppButton("Отмена", onClick = onDismiss) }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTabDialog(onDismiss: () -> Unit, onCreate: (String, TabKind) -> Unit) {
     var title by remember { mutableStateOf("") }
@@ -103,28 +99,11 @@ fun NewTabDialog(onDismiss: () -> Unit, onCreate: (String, TabKind) -> Unit) {
                     modifier = Modifier.fillMaxWidth().focusRequester(focus)
                 )
                 Spacer(Modifier.height(16.dp))
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    SegmentedButton(
-                        selected = kind == TabKind.TASKS,
-                        onClick = { kind = TabKind.TASKS },
-                        shape = SegmentedButtonDefaults.itemShape(0, 2)
-                    ) { Text("Задачи") }
-                    SegmentedButton(
-                        selected = kind == TabKind.NOTES,
-                        onClick = { kind = TabKind.NOTES },
-                        shape = SegmentedButtonDefaults.itemShape(1, 2)
-                    ) { Text("Заметки") }
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    if (kind == TabKind.TASKS) "Записи с галочками: их можно отмечать выполненными." else "Просто записи, без галочек: идеи, мысли, списки.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                AppSegmented(listOf(TabKind.TASKS to "Задачи", TabKind.NOTES to "Заметки"), kind, { kind = it })
             }
         },
-        confirmButton = { TextButton(onClick = create, enabled = title.isNotBlank()) { Text("Создать") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }
+        confirmButton = { AppButton("Создать", onClick = create, kind = ButtonKind.PRIMARY, enabled = title.isNotBlank()) },
+        dismissButton = { AppButton("Отмена", onClick = onDismiss) }
     )
 }
 
@@ -135,12 +114,12 @@ fun ConfirmDialog(title: String, text: String, confirmLabel: String, onDismiss: 
         title = { Text(title) },
         text = { Text(text) },
         confirmButton = {
-            TextButton(onClick = {
+            AppButton(confirmLabel, onClick = {
                 onDismiss()
                 onConfirm()
-            }) { Text(confirmLabel, color = MaterialTheme.colorScheme.error) }
+            }, kind = ButtonKind.DANGER)
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }
+        dismissButton = { AppButton("Отмена", onClick = onDismiss) }
     )
 }
 
@@ -155,17 +134,18 @@ fun TimePickerDialog(initial: LocalTime, onDismiss: () -> Unit, onClear: (() -> 
                 TimePicker(state = state)
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     if (onClear != null) {
-                        TextButton(onClick = {
+                        AppButton("Без времени", onClick = {
                             onDismiss()
                             onClear()
-                        }) { Text("Без времени") }
+                        })
                     }
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = onDismiss) { Text("Отмена") }
-                    TextButton(onClick = {
+                    AppButton("Отмена", onClick = onDismiss)
+                    Spacer(Modifier.width(4.dp))
+                    AppButton("Готово", onClick = {
                         onDismiss()
                         onPick(LocalTime.of(state.hour, state.minute))
-                    }) { Text("Готово") }
+                    }, kind = ButtonKind.PRIMARY)
                 }
             }
         }
@@ -173,7 +153,6 @@ fun TimePickerDialog(initial: LocalTime, onDismiss: () -> Unit, onClear: (() -> 
 }
 
 /** A reminder interval of the user's own: number + minutes / hours / days. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MinutesDialog(title: String, onDismiss: () -> Unit, onPick: (Int) -> Unit) {
     var value by remember { mutableStateOf("") }
@@ -195,23 +174,16 @@ fun MinutesDialog(title: String, onDismiss: () -> Unit, onPick: (Int) -> Unit) {
                     modifier = Modifier.fillMaxWidth().focusRequester(focus)
                 )
                 Spacer(Modifier.height(12.dp))
-                val units = listOf(1 to "мин", 60 to "ч", 24 * 60 to "дн")
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    units.forEachIndexed { index, (u, label) ->
-                        SegmentedButton(selected = unit == u, onClick = { unit = u }, shape = SegmentedButtonDefaults.itemShape(index, units.size)) {
-                            Text(label)
-                        }
-                    }
-                }
+                AppSegmented(listOf(1 to "мин", 60 to "ч", 24 * 60 to "дн"), unit, { unit = it })
             }
         },
         confirmButton = {
-            TextButton(onClick = {
+            AppButton("Добавить", onClick = {
                 onDismiss()
                 minutes?.let(onPick)
-            }, enabled = minutes != null) { Text("Добавить") }
+            }, kind = ButtonKind.PRIMARY, enabled = minutes != null)
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }
+        dismissButton = { AppButton("Отмена", onClick = onDismiss) }
     )
 }
 
@@ -224,12 +196,12 @@ fun DueDateDialog(initial: String?, onDismiss: () -> Unit, onPick: (String) -> U
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            TextButton(onClick = {
+            AppButton("Готово", onClick = {
                 state.selectedDateMillis?.let { onPick(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate().toString()) }
                 onDismiss()
-            }) { Text("Готово") }
+            }, kind = ButtonKind.PRIMARY)
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }
+        dismissButton = { AppButton("Отмена", onClick = onDismiss) }
     ) {
         DatePicker(state = state)
     }
