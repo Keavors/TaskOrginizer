@@ -63,6 +63,7 @@ class AppStorage(context: Context) {
 
     fun loadSettings(): Settings =
         runCatching { AppJson.decodeFromString(Settings.serializer(), settingsFile.readFully().decodeToString()) }
+            .map(::migrateSettings)
             .getOrElse { Settings() }
 
     fun writeSettings(settings: Settings) = write(settingsFile, AppJson.encodeToString(Settings.serializer(), settings))

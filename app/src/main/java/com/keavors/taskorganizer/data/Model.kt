@@ -219,13 +219,17 @@ data class Settings(
     /** Pure black backgrounds in the dark theme. */
     val pureBlack: Boolean = false,
     val newItemPosition: NewItemPosition = NewItemPosition.TOP,
-    val sort: ItemSort = ItemSort.ADDED,
+    val sort: ItemSort = ItemSort.PRIORITY,
     val speech: SpeechSettings = SpeechSettings(),
     val reminders: ReminderSettings = ReminderSettings()
 )
 
 const val DATA_SCHEMA_VERSION = 1
-const val SETTINGS_SCHEMA_VERSION = 1
+const val SETTINGS_SCHEMA_VERSION = 2
+
+/** Settings of older versions. 2: red and yellow entries go to the top (sorting by importance) by default. */
+fun migrateSettings(s: Settings): Settings =
+    if (s.schemaVersion < 2) s.copy(schemaVersion = 2, sort = ItemSort.PRIORITY) else s
 const val TRASH_RETENTION_DAYS = 30
 const val DEFAULT_TAB_TITLE = "Задачи"
 const val NEW_TAB_TITLE = "Новая вкладка"

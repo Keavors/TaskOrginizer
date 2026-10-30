@@ -1,10 +1,11 @@
 package com.keavors.taskorganizer.ui
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +61,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -83,6 +86,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+
+/** How entries move when the order changes: fast, but smooth. */
+private val MOVE = tween<IntOffset>(durationMillis = 260, easing = FastOutSlowInEasing)
 
 @Composable
 fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: PaddingValues) {
@@ -126,6 +132,20 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
         vm.highlightItemId = null
     }
 
+    // A raised entry flies up; if its new place is out of sight, the list follows it.
+    val raised = vm.raised
+    LaunchedEffect(raised) {
+        val id = raised?.first ?: return@LaunchedEffect
+        withFrameNanos { }
+        val info = listState.layoutInfo
+        val visible = info.visibleItemsInfo.any { it.key == id && it.offset >= info.viewportStartOffset && it.offset + it.size <= info.viewportEndOffset }
+        if (!visible) {
+            val index = info.visibleItemsInfo.firstOrNull { it.key == id }?.index
+                ?: (listOf("header") + (if (items.isEmpty()) listOf("empty") else emptyList()) + open.map { it.id }).indexOf(id)
+            if (index >= 0) listState.animateScrollToItem((index - 1).coerceAtLeast(0))
+        }
+    }
+
     // The list stays between the bars, so the bars can show the background of the design.
     LazyColumn(
         state = listState,
@@ -139,7 +159,8 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
         item(key = "header") { TabHeader(tab, open.size, done.size) }
         if (items.isEmpty()) item(key = "empty") { EmptyState(tab) }
         items(open, key = { it.id }) { item ->
-            ReorderableItem(reorderState, key = item.id) { dragging ->
+            // A quick, smooth move when the order changes (a red or yellow entry goes up at once).
+            ReorderableItem(reorderState, key = item.id, animateItemModifier = Modifier.animateItem(fadeInSpec = tween(160), placementSpec = MOVE, fadeOutSpec = tween(120))) { dragging ->
                 ItemRow(vm, data, tab, item, dragging, highlight == item.id, Modifier.draggableHandle())
             }
         }
@@ -160,7 +181,9 @@ fun ItemList(vm: MainViewModel, data: AppData, tab: Tab, contentPadding: Padding
             }
             if (showDone) {
                 items(done, key = { it.id }) { item ->
-                    ItemRow(vm, data, tab, item, dragging = false, highlighted = highlight == item.id, dragHandle = null)
+                    Box(Modifier.animateItem(fadeInSpec = tween(160), placementSpec = MOVE, fadeOutSpec = tween(120))) {
+                        ItemRow(vm, data, tab, item, dragging = false, highlighted = highlight == item.id, dragHandle = null)
+                    }
                 }
             }
         }
@@ -273,24 +296,9 @@ private fun ItemRow(
         backgroundContent = { SwipeBackground(swipe.dismissDirection, item.done) }
     ) {
         ItemFrame(item.priority, highlighted, dragging) {
-            // Tap anywhere on the entry = its menu, hold = edit the text. Either ends typing elsewhere.
+            // Tapping or holding the entry itself does nothing; its actions are behind the "more" button.
             Row(
-                Modifier
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        enabled = !editing,
-                        onClickLabel = "Меню",
-                        onLongClickLabel = "Изменить текст",
-                        onClick = {
-                            focus.clearFocus()
-                            menu = true
-                        },
-                        onLongClick = {
-                            focus.clearFocus()
-                            editing = true
-                        }
-                    )
-                    .padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
+                Modifier.fillMaxWidth().padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isTask) {
@@ -329,8 +337,12 @@ private fun ItemRow(
                         }
                     }
                 }
+                PriorityMark(item.priority) { vm.setPriority(tab.id, item.id, item.priority.next()) }
                 Box {
-                    PriorityMark(item.priority) { vm.setPriority(tab.id, item.id, item.priority.next()) }
+                    AppIconButton(design.icons.more, "Действия с записью", size = 40.dp) {
+                        focus.clearFocus()
+                        menu = true
+                    }
                     DueMenu(
                         expanded = dueMenu,
                         date = item.dueDate,

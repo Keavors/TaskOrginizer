@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
@@ -308,6 +309,9 @@ fun TaskOrganizerTheme(settings: Settings, content: @Composable () -> Unit) {
     val shapes = remember(settings.style) { shapes(settings.style) }
     val design = remember(settings.style) { designOf(settings.style) }
     CompositionLocalProvider(LocalDesign provides design) {
-        MaterialTheme(colorScheme = colors, typography = type, shapes = shapes, content = content)
+        MaterialTheme(colorScheme = colors, typography = type, shapes = shapes) {
+            // Text without a color of its own follows the theme: screens are transparent and give no content color.
+            CompositionLocalProvider(LocalContentColor provides colors.onSurface, content = content)
+        }
     }
 }

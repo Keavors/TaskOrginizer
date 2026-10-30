@@ -93,8 +93,15 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setDone(tabId: String, itemId: String, done: Boolean) = store.update { DataOps.setDone(it, tabId, itemId, done) }
 
-    fun setPriority(tabId: String, itemId: String, priority: Priority) =
+    /** The entry whose importance was just raised (with a counter, so each raise is a new event). */
+    var raised by mutableStateOf<Pair<String, Int>?>(null)
+        private set
+
+    fun setPriority(tabId: String, itemId: String, priority: Priority) {
+        val old = DataOps.tab(store.current, tabId)?.let { store.current.itemsOf(it.id).firstOrNull { item -> item.id == itemId } }?.priority
         store.update { DataOps.setPriority(it, tabId, itemId, priority) }
+        if (old != null && priority > old) raised = itemId to ((raised?.second ?: 0) + 1)
+    }
 
     /** Sets the due date and time; asks for notifications once if the entry will remind. */
     fun setDue(tabId: String, itemId: String, date: String?, time: String?) {

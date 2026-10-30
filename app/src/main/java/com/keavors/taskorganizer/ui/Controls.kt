@@ -111,6 +111,7 @@ fun AppIconButton(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    size: Dp = 48.dp,
     onClick: () -> Unit
 ) {
     val d = LocalDesign.current
@@ -122,7 +123,7 @@ fun AppIconButton(
     }
     val fill = if (d.button == ButtonLook.TONAL) Modifier.padding(4.dp).clip(shape).background(c.primaryContainer.copy(alpha = 0.7f)) else Modifier.clip(shape)
     Box(
-        modifier.size(48.dp).then(fill).clickable(role = Role.Button, onClickLabel = contentDescription, onClick = onClick),
+        modifier.size(size).then(fill).clickable(role = Role.Button, onClickLabel = contentDescription, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         AppIcon(icon, contentDescription, tint = if (d.button == ButtonLook.TONAL) c.onPrimaryContainer else tint)

@@ -13,6 +13,7 @@ import com.keavors.taskorganizer.data.TabColor
 import com.keavors.taskorganizer.data.TabKind
 import com.keavors.taskorganizer.data.TrashedItem
 import com.keavors.taskorganizer.data.defaultData
+import com.keavors.taskorganizer.data.migrateSettings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -157,6 +158,13 @@ class DataOpsTest {
         assertEquals(false, item.important)
         // The flag is not written any more.
         assertTrue("important" !in AppJson.encodeToString(Item.serializer(), item))
+    }
+
+    @Test fun olderSettingsSortByImportance() {
+        val old = AppJson.decodeFromString(Settings.serializer(), """{"schemaVersion":1,"sort":"added"}""")
+        assertEquals(ItemSort.PRIORITY, migrateSettings(old).sort)
+        // A choice made in the current version stays.
+        assertEquals(ItemSort.ADDED, migrateSettings(Settings(sort = ItemSort.ADDED)).sort)
     }
 
     @Test fun priorityOrderKeepsTheOrderInsideALevel() {

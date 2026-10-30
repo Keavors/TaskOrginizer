@@ -168,7 +168,7 @@ fun PriorityMark(priority: Priority, onClick: (() -> Unit)? = null) {
     val color = priorityColor(priority)
     val description = "Важность: ${priorityName(priority)}"
     val tap = if (onClick != null) Modifier.clip(CircleShape).clickable(role = Role.Button, onClickLabel = description, onClick = onClick) else Modifier
-    Box(Modifier.size(if (onClick != null) 48.dp else 28.dp).then(tap), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(if (onClick != null) 44.dp else 28.dp).then(tap), contentAlignment = Alignment.Center) {
         when (d.flag) {
             FlagLook.FLAG -> AppIcon(if (priority == Priority.NORMAL) Icons.Outlined.Flag else d.icons.flag, description, tint = color)
             FlagLook.DOT -> Box(
