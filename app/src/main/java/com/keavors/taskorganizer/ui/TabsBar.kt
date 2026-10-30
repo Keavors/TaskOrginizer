@@ -1,0 +1,305 @@
+package com.keavors.taskorganizer.ui
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StickyNote2
+import androidx.compose.material.icons.outlined.TaskAlt
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.keavors.taskorganizer.data.AppData
+import com.keavors.taskorganizer.data.Tab
+import com.keavors.taskorganizer.data.TabColor
+import com.keavors.taskorganizer.data.TabKind
+import com.keavors.taskorganizer.ui.theme.tabColor
+
+private val COLOR_NAMES = mapOf(
+    TabColor.BLUE to "Синий", TabColor.VIOLET to "Фиолетовый", TabColor.PINK to "Розовый",
+    TabColor.RED to "Красный", TabColor.ORANGE to "Оранжевый", TabColor.AMBER to "Жёлтый",
+    TabColor.GREEN to "Зелёный", TabColor.TEAL to "Бирюзовый", TabColor.GRAY to "Серый"
+)
+
+fun openCount(tab: Tab, data: AppData): Int {
+    val list = data.itemsOf(tab.id)
+    return if (tab.kind == TabKind.TASKS) list.count { !it.done } else list.size
+}
+
+/** App title, search, menu and the row of tabs. */
+@Composable
+fun TopBar(vm: MainViewModel, data: AppData) {
+    var menu by remember { mutableStateOf(false) }
+    Column(Modifier.background(MaterialTheme.colorScheme.background).statusBarsPadding()) {
+        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 4.dp, top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                "Органайзер задач",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = { vm.screen = Screen.SEARCH }) { Icon(Icons.Outlined.Search, "Поиск") }
+            Box {
+                IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, "Ещё") }
+                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                    DropdownMenuItem(
+                        text = { Text(if (data.trash.isEmpty()) "Корзина" else "Корзина (${data.trash.size})") },
+                        leadingIcon = { Icon(Icons.Outlined.DeleteSweep, null) },
+                        onClick = { menu = false; vm.screen = Screen.TRASH }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Настройки") },
+                        leadingIcon = { Icon(Icons.Outlined.Settings, null) },
+                        onClick = { menu = false; vm.screen = Screen.SETTINGS }
+                    )
+                }
+            }
+        }
+        TabsRow(vm, data)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun TabsRow(vm: MainViewModel, data: AppData) {
+    val listState = rememberLazyListState()
+    var newTab by remember { mutableStateOf(false) }
+    val activeIndex = data.tabs.indexOfFirst { it.id == data.activeTab.id }
+
+    LaunchedEffect(activeIndex) {
+        val visible = listState.layoutInfo.visibleItemsInfo
+        if (visible.none { it.index == activeIndex && it.offset >= 0 && it.offset + it.size <= listState.layoutInfo.viewportEndOffset }) {
+            listState.animateScrollToItem(activeIndex.coerceAtLeast(0))
+        }
+    }
+
+    LazyRow(
+        state = listState,
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        itemsIndexed(data.tabs, key = { _, tab -> tab.id }) { index, tab ->
+            TabChip(vm, data, tab, index, Modifier.animateItem())
+        }
+        item(key = "add") {
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                modifier = Modifier.clip(CircleShape).clickable { newTab = true }
+            ) {
+                Box(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                    Icon(Icons.Outlined.Add, "Новая вкладка", Modifier.size(20.dp))
+                }
+            }
+        }
+    }
+
+    if (newTab) {
+        NewTabDialog(onDismiss = { newTab = false }) { title, kind ->
+            newTab = false
+            vm.addTab(title, kind)
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun TabChip(vm: MainViewModel, data: AppData, tab: Tab, index: Int, modifier: Modifier) {
+    val selected = tab.id == data.activeTab.id
+    val count = openCount(tab, data)
+    var menu by remember { mutableStateOf(false) }
+    var rename by remember { mutableStateOf(false) }
+    var confirmDelete by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
+
+    Box(modifier) {
+        Surface(
+            shape = CircleShape,
+            color = if (selected) colors.primary else colors.surfaceContainerHigh,
+            contentColor = if (selected) colors.onPrimary else colors.onSurface,
+            modifier = Modifier
+                .clip(CircleShape)
+                .combinedClickable(
+                    onClick = { vm.selectTab(tab.id) },
+                    onLongClick = {
+                        vm.selectTab(tab.id)
+                        menu = true
+                    }
+                )
+        ) {
+            Row(Modifier.padding(horizontal = 16.dp, vertical = 9.dp), verticalAlignment = Alignment.CenterVertically) {
+                tab.color?.let {
+                    Box(
+                        Modifier.size(9.dp).clip(CircleShape).background(tabColor(it))
+                            .then(if (selected) Modifier.border(1.5.dp, colors.onPrimary, CircleShape) else Modifier)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                }
+                Text(
+                    tab.title,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 180.dp)
+                )
+                if (count > 0) {
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        count.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (selected) colors.onPrimary.copy(alpha = 0.75f) else colors.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+            DropdownMenuItem(text = { Text("Переименовать") }, leadingIcon = { Icon(Icons.Outlined.Edit, null) }, onClick = {
+                menu = false
+                rename = true
+            })
+            HorizontalDivider()
+            KindItem("Задачи с галочками", Icons.Outlined.TaskAlt, tab.kind == TabKind.TASKS) {
+                menu = false
+                vm.setTabKind(tab.id, TabKind.TASKS)
+            }
+            KindItem("Заметки", Icons.Outlined.StickyNote2, tab.kind == TabKind.NOTES) {
+                menu = false
+                vm.setTabKind(tab.id, TabKind.NOTES)
+            }
+            HorizontalDivider()
+            ColorRow(tab.color) {
+                menu = false
+                vm.setTabColor(tab.id, it)
+            }
+            HorizontalDivider()
+            if (index > 0) {
+                DropdownMenuItem(
+                    text = { Text("Сдвинуть влево") },
+                    leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, null) },
+                    onClick = { menu = false; vm.moveTab(index, index - 1) }
+                )
+            }
+            if (index < data.tabs.lastIndex) {
+                DropdownMenuItem(
+                    text = { Text("Сдвинуть вправо") },
+                    leadingIcon = { Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null) },
+                    onClick = { menu = false; vm.moveTab(index, index + 1) }
+                )
+            }
+            DropdownMenuItem(
+                text = { Text(if (data.tabs.size > 1) "Удалить вкладку" else "Единственную вкладку удалить нельзя") },
+                leadingIcon = { Icon(Icons.Outlined.Delete, null) },
+                enabled = data.tabs.size > 1,
+                onClick = {
+                    menu = false
+                    if (data.itemsOf(tab.id).isEmpty()) vm.deleteTab(tab.id) else confirmDelete = true
+                }
+            )
+        }
+    }
+
+    if (rename) {
+        TextInputDialog(title = "Переименовать вкладку", initial = tab.title, label = "Название", onDismiss = { rename = false }) {
+            rename = false
+            vm.renameTab(tab.id, it)
+        }
+    }
+    if (confirmDelete) {
+        val n = data.itemsOf(tab.id).size
+        ConfirmDialog(
+            title = "Удалить «${tab.title}»?",
+            text = "Вместе с вкладкой в корзину попадут ${entriesCount(n)}. Восстановить можно в течение 30 дней.",
+            confirmLabel = "Удалить",
+            onDismiss = { confirmDelete = false }
+        ) { vm.deleteTab(tab.id) }
+    }
+}
+
+@Composable
+private fun KindItem(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, checked: Boolean, onClick: () -> Unit) {
+    DropdownMenuItem(
+        text = { Text(label) },
+        leadingIcon = { Icon(icon, null) },
+        trailingIcon = { if (checked) Icon(Icons.Rounded.Check, null, tint = MaterialTheme.colorScheme.primary) },
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun ColorRow(current: TabColor?, onPick: (TabColor?) -> Unit) {
+    Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+        Text("Цвет", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Spacer(Modifier.size(8.dp))
+        val rows = listOf(listOf<TabColor?>(null) + TabColor.entries.take(4), TabColor.entries.drop(4))
+        rows.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(bottom = 8.dp)) {
+                row.forEach { color ->
+                    val selected = color == current
+                    Box(
+                        Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(color?.let { tabColor(it) } ?: MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .border(if (selected) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                            .clickable { onPick(color) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (color == null) Text("—", style = MaterialTheme.typography.labelSmall)
+                    }
+                }
+            }
+        }
+        Text(
+            current?.let { COLOR_NAMES[it] } ?: "Без цвета",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}

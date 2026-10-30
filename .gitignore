@@ -1,16 +1,22 @@
-node_modules/
-out/
-dist/
-coverage/
-*.log
-*.tsbuildinfo
+# Gradle / Android
+.gradle/
+build/
+local.properties
+.cxx/
+.externalNativeBuild/
+captures/
+*.apk
+*.aab
 
-# whisper.cpp runtime is downloaded by scripts/fetch-whisper.mjs
-resources/whisper/
+# IDE
+.idea/
+*.iml
+.vscode/
 
-# local artifacts (screenshots from UI smoke tests, temp files)
-.artifacts/
-.tmp/
-
+# OS
 .DS_Store
 Thumbs.db
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log

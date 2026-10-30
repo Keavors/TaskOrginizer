@@ -1,0 +1,96 @@
+package com.keavors.taskorganizer.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Restore
+import androidx.compose.material.icons.outlined.StickyNote2
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.keavors.taskorganizer.data.AppData
+import com.keavors.taskorganizer.data.TrashedItem
+import com.keavors.taskorganizer.data.TrashedTab
+
+@Composable
+fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
+    var confirmEmpty by remember { mutableStateOf(false) }
+    ScreenScaffold(
+        "Корзина",
+        onBack = { vm.screen = Screen.MAIN },
+        snackbar = snackbar,
+        actions = { if (data.trash.isNotEmpty()) TextButton(onClick = { confirmEmpty = true }) { Text("Очистить") } }
+    ) { padding ->
+        LazyColumn(
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                Text(
+                    if (data.trash.isEmpty()) "Корзина пуста." else "Удалённое хранится 30 дней, потом исчезает навсегда.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            items(data.trash, key = { it.id }) { entry ->
+                Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
+                    Row(Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            if (entry is TrashedTab) Icons.Outlined.Folder else Icons.Outlined.StickyNote2,
+                            null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.width(14.dp))
+                        Column(Modifier.weight(1f)) {
+                            val (title, meta) = when (entry) {
+                                is TrashedTab -> entry.tab.title to "вкладка, ${entriesCount(entry.items.size)}"
+                                is TrashedItem -> entry.item.text to "из «${entry.tabTitle}»"
+                            }
+                            Text(title, style = MaterialTheme.typography.bodyLarge, maxLines = 3)
+                            Text(
+                                "$meta · ${ago(entry.deletedAt)}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        IconButton(onClick = { vm.restoreFromTrash(entry) }) { Icon(Icons.Outlined.Restore, "Восстановить") }
+                        IconButton(onClick = { vm.deleteFromTrash(entry) }) { Icon(Icons.Outlined.DeleteForever, "Удалить навсегда") }
+                    }
+                }
+            }
+        }
+    }
+    if (confirmEmpty) {
+        ConfirmDialog(
+            title = "Очистить корзину?",
+            text = "Всё содержимое корзины удалится навсегда.",
+            confirmLabel = "Очистить",
+            onDismiss = { confirmEmpty = false }
+        ) { vm.emptyTrash() }
+    }
+}
