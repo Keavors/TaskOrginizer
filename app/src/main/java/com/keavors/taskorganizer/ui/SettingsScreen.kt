@@ -28,10 +28,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -39,7 +41,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,8 +48,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -64,6 +63,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -97,32 +98,55 @@ import java.time.LocalTime
 import java.util.Date
 import java.util.Locale
 
-/** Screen frame with a back arrow and the design's background. Content stays above the navigation buttons. */
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Screen frame with a back arrow and the design's background. The title is the first row
+ * of the list, so it scrolls away with the content instead of staying on top of it.
+ * Content stays below the status bar and above the navigation buttons.
+ */
 @Composable
 fun ScreenScaffold(
     title: String,
     onBack: () -> Unit,
     snackbar: SnackbarHostState? = null,
+    spacing: Dp = 0.dp,
     actions: @Composable RowScope.() -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit
+    content: LazyListScope.() -> Unit
 ) {
-    val d = LocalDesign.current
     ScreenBackground {
         Scaffold(
             modifier = Modifier.navigationBarsPadding(),
-            topBar = {
-                TopAppBar(
-                    title = { Text(labelText(title), style = MaterialTheme.typography.titleLarge.glowing()) },
-                    navigationIcon = { AppIconButton(d.icons.back, "Назад", tint = MaterialTheme.colorScheme.onSurface, onClick = onBack) },
-                    actions = actions,
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent, scrolledContainerColor = Color.Transparent)
-                )
-            },
             snackbarHost = { if (snackbar != null) SnackbarHost(snackbar) },
-            containerColor = Color.Transparent,
-            content = content
+            containerColor = Color.Transparent
+        ) { padding ->
+            LazyColumn(
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = padding.calculateBottomPadding() + 24.dp),
+                verticalArrangement = Arrangement.spacedBy(spacing),
+                modifier = Modifier.fillMaxSize().padding(top = padding.calculateTopPadding())
+            ) {
+                item(key = "screen-header") {
+                    ScreenHeader(title, onBack, actions, Modifier.padding(bottom = (8.dp - spacing).coerceAtLeast(0.dp)))
+                }
+                content()
+            }
+        }
+    }
+}
+
+/** Back arrow, title and actions, laid out like a top app bar. */
+@Composable
+private fun ScreenHeader(title: String, onBack: () -> Unit, actions: @Composable RowScope.() -> Unit, modifier: Modifier = Modifier) {
+    val d = LocalDesign.current
+    Row(modifier.fillMaxWidth().height(64.dp), verticalAlignment = Alignment.CenterVertically) {
+        // Shifted left so the arrow itself lines up with the content edge, as in a top app bar.
+        AppIconButton(d.icons.back, "Назад", Modifier.offset(x = (-12).dp), tint = MaterialTheme.colorScheme.onSurface, onClick = onBack)
+        Text(
+            labelText(title),
+            style = MaterialTheme.typography.titleLarge.glowing(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
+        actions()
     }
 }
 
@@ -207,83 +231,78 @@ fun SettingsScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState
         if (uri != null) confirmImport = uri
     }
 
-    ScreenScaffold("Настройки", onBack = { vm.screen = Screen.MAIN }, snackbar = snackbar) { padding ->
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item {
-                SettingsSection("Оформление") {
-                    StylePicker(settings) { v -> vm.updateSettings { it.copy(style = v) } }
-                    PalettePicker(settings) { v -> vm.updateSettings { it.copy(palette = v) } }
-                    ChoiceRow(
-                        "Тема",
-                        listOf(ThemeMode.SYSTEM to "Авто", ThemeMode.LIGHT to "Светлая", ThemeMode.DARK to "Тёмная"),
-                        settings.theme
-                    ) { v -> vm.updateSettings { it.copy(theme = v) } }
-                    SwitchRow("Чёрный фон", null, settings.pureBlack) { v -> vm.updateSettings { it.copy(pureBlack = v) } }
+    ScreenScaffold("Настройки", onBack = { vm.screen = Screen.MAIN }, snackbar = snackbar) {
+        item {
+            SettingsSection("Оформление") {
+                StylePicker(settings) { v -> vm.updateSettings { it.copy(style = v) } }
+                PalettePicker(settings) { v -> vm.updateSettings { it.copy(palette = v) } }
+                ChoiceRow(
+                    "Тема",
+                    listOf(ThemeMode.SYSTEM to "Авто", ThemeMode.LIGHT to "Светлая", ThemeMode.DARK to "Тёмная"),
+                    settings.theme
+                ) { v -> vm.updateSettings { it.copy(theme = v) } }
+                SwitchRow("Чёрный фон", null, settings.pureBlack) { v -> vm.updateSettings { it.copy(pureBlack = v) } }
+            }
+        }
+        item {
+            SettingsSection("Голосовой ввод") {
+                ServiceRow(vm, speech.service)
+                ChoiceRow(
+                    "Язык речи",
+                    listOf("ru-RU" to "Русский", "en-US" to "English"),
+                    speechLanguageTag(speech.language)
+                ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(language = v)) } }
+                SwitchRow("Только без интернета", null, speech.offlineOnly) { v ->
+                    vm.updateSettings { it.copy(speech = it.speech.copy(offlineOnly = v)) }
+                }
+                SwitchRow("Сразу добавлять надиктованное", null, speech.autoSubmit) { v ->
+                    vm.updateSettings { it.copy(speech = it.speech.copy(autoSubmit = v)) }
+                }
+                NavRow(icons.book, "Словарь", if (data.dictionary.isEmpty()) null else "Слов: ${data.dictionary.size}") {
+                    vm.screen = Screen.DICTIONARY
                 }
             }
-            item {
-                SettingsSection("Голосовой ввод") {
-                    ServiceRow(vm, speech.service)
-                    ChoiceRow(
-                        "Язык речи",
-                        listOf("ru-RU" to "Русский", "en-US" to "English"),
-                        speechLanguageTag(speech.language)
-                    ) { v -> vm.updateSettings { it.copy(speech = it.speech.copy(language = v)) } }
-                    SwitchRow("Только без интернета", null, speech.offlineOnly) { v ->
-                        vm.updateSettings { it.copy(speech = it.speech.copy(offlineOnly = v)) }
-                    }
-                    SwitchRow("Сразу добавлять надиктованное", null, speech.autoSubmit) { v ->
-                        vm.updateSettings { it.copy(speech = it.speech.copy(autoSubmit = v)) }
-                    }
-                    NavRow(icons.book, "Словарь", if (data.dictionary.isEmpty()) null else "Слов: ${data.dictionary.size}") {
-                        vm.screen = Screen.DICTIONARY
-                    }
+        }
+        item {
+            SettingsSection("Список") {
+                ChoiceRow(
+                    "Сортировка",
+                    listOf(ItemSort.ADDED to "По дате", ItemSort.PRIORITY to "По важности"),
+                    settings.sort
+                ) { v -> vm.updateSettings { it.copy(sort = v) } }
+                ChoiceRow(
+                    "Новые записи",
+                    listOf(NewItemPosition.TOP to "Сверху", NewItemPosition.BOTTOM to "Снизу"),
+                    settings.newItemPosition
+                ) { v -> vm.updateSettings { it.copy(newItemPosition = v) } }
+            }
+        }
+        item {
+            SettingsSection("Напоминания") {
+                ReminderSettingsRows(settings.reminders) { change -> vm.updateSettings { it.copy(reminders = change(it.reminders)) } }
+            }
+        }
+        item {
+            SettingsSection("Данные") {
+                NavRow(icons.trash, "Корзина", if (data.trash.isEmpty()) null else "Удалённых: ${data.trash.size}") {
+                    vm.screen = Screen.TRASH
+                }
+                NavRow(icons.upload, "Сохранить копию в файл", null) {
+                    val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+                    exportLauncher.launch("Органайзер задач $day.json")
+                }
+                NavRow(icons.download, "Загрузить из файла", "Заменит текущие данные") {
+                    importLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/plain"))
                 }
             }
-            item {
-                SettingsSection("Список") {
-                    ChoiceRow(
-                        "Сортировка",
-                        listOf(ItemSort.ADDED to "По дате", ItemSort.PRIORITY to "По важности"),
-                        settings.sort
-                    ) { v -> vm.updateSettings { it.copy(sort = v) } }
-                    ChoiceRow(
-                        "Новые записи",
-                        listOf(NewItemPosition.TOP to "Сверху", NewItemPosition.BOTTOM to "Снизу"),
-                        settings.newItemPosition
-                    ) { v -> vm.updateSettings { it.copy(newItemPosition = v) } }
-                }
-            }
-            item {
-                SettingsSection("Напоминания") {
-                    ReminderSettingsRows(settings.reminders) { change -> vm.updateSettings { it.copy(reminders = change(it.reminders)) } }
-                }
-            }
-            item {
-                SettingsSection("Данные") {
-                    NavRow(icons.trash, "Корзина", if (data.trash.isEmpty()) null else "Удалённых: ${data.trash.size}") {
-                        vm.screen = Screen.TRASH
-                    }
-                    NavRow(icons.upload, "Сохранить копию в файл", null) {
-                        val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
-                        exportLauncher.launch("Органайзер задач $day.json")
-                    }
-                    NavRow(icons.download, "Загрузить из файла", "Заменит текущие данные") {
-                        importLauncher.launch(arrayOf("application/json", "application/octet-stream", "text/plain"))
-                    }
-                }
-            }
-            item {
-                SettingsSection("О приложении") {
-                    Text(
-                        "Органайзер задач ${BuildConfigInfo.versionName(vm.getApplication())}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+        }
+        item {
+            SettingsSection("О приложении") {
+                Text(
+                    "Органайзер задач ${BuildConfigInfo.versionName(vm.getApplication())}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }

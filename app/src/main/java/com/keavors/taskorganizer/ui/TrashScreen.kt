@@ -36,45 +36,40 @@ fun TrashScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostState) {
         "Корзина",
         onBack = { vm.screen = Screen.MAIN },
         snackbar = snackbar,
+        spacing = 8.dp,
         actions = { if (data.trash.isNotEmpty()) AppButton("Очистить", onClick = { confirmEmpty = true }) }
-    ) { padding ->
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item {
-                Text(
-                    if (data.trash.isEmpty()) "Корзина пуста." else "Удалённое хранится 30 дней, потом исчезает навсегда.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-            items(data.trash, key = { it.id }) { entry ->
-                Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-                    Row(Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            if (entry is TrashedTab) LocalDesign.current.icons.folder else LocalDesign.current.icons.book,
-                            null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(Modifier.width(14.dp))
-                        Column(Modifier.weight(1f)) {
-                            val (title, meta) = when (entry) {
-                                is TrashedTab -> entry.tab.title to "вкладка, ${entriesCount(entry.items.size)}"
-                                is TrashedItem -> entry.item.text to "из «${entry.tabTitle}»"
-                            }
-                            Text(title, style = MaterialTheme.typography.bodyLarge, maxLines = 3)
-                            Text(
-                                "$meta · ${ago(entry.deletedAt)}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+    ) {
+        item {
+            Text(
+                if (data.trash.isEmpty()) "Корзина пуста." else "Удалённое хранится 30 дней, потом исчезает навсегда.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+        items(data.trash, key = { it.id }) { entry ->
+            Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
+                Row(Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        if (entry is TrashedTab) LocalDesign.current.icons.folder else LocalDesign.current.icons.book,
+                        null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.width(14.dp))
+                    Column(Modifier.weight(1f)) {
+                        val (title, meta) = when (entry) {
+                            is TrashedTab -> entry.tab.title to "вкладка, ${entriesCount(entry.items.size)}"
+                            is TrashedItem -> entry.item.text to "из «${entry.tabTitle}»"
                         }
-                        AppIconButton(LocalDesign.current.icons.restore, "Восстановить") { vm.restoreFromTrash(entry) }
-                        AppIconButton(LocalDesign.current.icons.deleteForever, "Удалить навсегда") { vm.deleteFromTrash(entry) }
+                        Text(title, style = MaterialTheme.typography.bodyLarge, maxLines = 3)
+                        Text(
+                            "$meta · ${ago(entry.deletedAt)}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
+                    AppIconButton(LocalDesign.current.icons.restore, "Восстановить") { vm.restoreFromTrash(entry) }
+                    AppIconButton(LocalDesign.current.icons.deleteForever, "Удалить навсегда") { vm.deleteFromTrash(entry) }
                 }
             }
         }

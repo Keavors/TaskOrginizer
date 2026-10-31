@@ -52,48 +52,42 @@ fun DictionaryScreen(vm: MainViewModel, data: AppData, snackbar: SnackbarHostSta
             newWord = ""
         }
     }
-    ScreenScaffold("Словарь", onBack = { vm.screen = Screen.SETTINGS }, snackbar = snackbar) { padding ->
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
+    ScreenScaffold("Словарь", onBack = { vm.screen = Screen.SETTINGS }, snackbar = snackbar, spacing = 12.dp) {
+        item {
+            Text(
+                "Добавьте названия, которые вы часто говорите: GitHub, Docker, имена. " +
+                    "«Варианты» — как их пишет распознавание («гитхаб»): такие слова заменяются автоматически, с любыми окончаниями. " +
+                    "Если вы исправите надиктованное слово вручную, приложение само предложит его запомнить.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = newWord,
+                    onValueChange = { newWord = it },
+                    label = { Text("Новое слово") },
+                    placeholder = { Text("Например, Kubernetes") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { add() }),
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(8.dp))
+                AppIconButton(LocalDesign.current.icons.add, "Добавить", tint = MaterialTheme.colorScheme.primary, onClick = add)
+            }
+        }
+        if (data.dictionary.isEmpty()) {
             item {
                 Text(
-                    "Добавьте названия, которые вы часто говорите: GitHub, Docker, имена. " +
-                        "«Варианты» — как их пишет распознавание («гитхаб»): такие слова заменяются автоматически, с любыми окончаниями. " +
-                        "Если вы исправите надиктованное слово вручную, приложение само предложит его запомнить.",
+                    "Словарь пока пуст.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
                 )
             }
-            item {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = newWord,
-                        onValueChange = { newWord = it },
-                        label = { Text("Новое слово") },
-                        placeholder = { Text("Например, Kubernetes") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { add() }),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    AppIconButton(LocalDesign.current.icons.add, "Добавить", tint = MaterialTheme.colorScheme.primary, onClick = add)
-                }
-            }
-            if (data.dictionary.isEmpty()) {
-                item {
-                    Text(
-                        "Словарь пока пуст.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 24.dp).fillMaxWidth()
-                    )
-                }
-            }
-            items(data.dictionary, key = { it.id }) { term -> TermCard(vm, term) }
         }
+        items(data.dictionary, key = { it.id }) { term -> TermCard(vm, term) }
     }
 }
 
